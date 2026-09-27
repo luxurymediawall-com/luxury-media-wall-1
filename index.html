@@ -216,18 +216,6 @@
   </div>
 </div>
 
-<!-- ==================================================== SHOWCASE ======= -->
-<!-- A purely visual band: the portfolio drifts past one photograph at a
-     time, with nothing set over it. Cards are dealt from SHOWCASE in
-     site-config.js by main.js; the band carries its own height because its
-     contents are all absolutely positioned. -->
-<div class="showcase" aria-hidden="true">
-  <div class="showcase__stage">
-    <div class="showcase__inner" id="showcaseInner"></div>
-  </div>
-  <div class="showcase__scrim"></div>
-</div>
-
 <!-- ===================================================== JOURNEY ======= -->
 <!-- The design process as a pinned horizontal run: the section holds the
      screen while the track slides sideways, and each stage draws its stem
@@ -536,28 +524,33 @@
       </div>
       <div class="section-head__aside">
         <p class="lede" data-reveal>
-          Ten material families we work with most often. Hover or tap any one for where
-          it belongs in a scheme.
+          Eleven material families we work with most often. Step through them for
+          where each one belongs in a scheme.
         </p>
       </div>
     </div>
 
-    <!-- Same drag coverflow as Services, dealt from MATERIALS. -->
-    <div class="cflow" id="materialsFlow" role="region"
+    <!-- Each sample dissolves into the next through a noise field drawn in
+         WebGL. Without WebGL the same photographs cross-fade instead - see
+         initMaterialsMorph in main.js. -->
+    <div class="morph" id="materialsMorph" role="region" tabindex="0"
          aria-roledescription="carousel" aria-label="Materials">
-      <div class="cflow__frame" id="materialsFrame" tabindex="0">
-        <div class="cflow__ring" id="materialsRing"></div>
+      <div class="morph__stage">
+        <canvas class="morph__canvas" id="materialsCanvas" aria-hidden="true"></canvas>
+        <div class="morph__plain" id="materialsPlain" aria-hidden="true"></div>
+        <div class="morph__scrim" aria-hidden="true"></div>
+
+        <button type="button" class="morph__arrow morph__arrow--prev" id="materialsPrev" aria-label="Previous material">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button type="button" class="morph__arrow morph__arrow--next" id="materialsNext" aria-label="Next material">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+
+        <ul class="morph__thumbs" id="materialsThumbs"></ul>
       </div>
 
-      <button type="button" class="cflow__arrow cflow__arrow--prev" id="materialsPrev" aria-label="Previous material">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-      <button type="button" class="cflow__arrow cflow__arrow--next" id="materialsNext" aria-label="Next material">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-      </button>
-
       <div class="cflow__caption" id="materialsCaption" aria-live="polite"></div>
-      <div class="cflow__dots" id="materialsDots"></div>
     </div>
   </div>
 </section>

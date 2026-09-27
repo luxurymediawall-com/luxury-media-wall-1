@@ -1247,30 +1247,369 @@
     });
   }
 
-  function initMaterialsFlow() {
-    if (typeof MATERIALS === 'undefined') return;
-    initCoverFlow({
-      frame: '#materialsFrame', ring: '#materialsRing',
-      caption: '#materialsCaption', dots: '#materialsDots',
-      prev: '#materialsPrev', next: '#materialsNext',
-      items: MATERIALS,
-      dotLabel: (m) => m.name,
-      /* Each material is its own sample photograph, already cropped to the
-         4:5 card, so a plain responsive <img> shows the whole sample. */
-      card: (m) => `
-        <img src="${asset(m.img + '-900.jpg')}" srcset="${srcsetCard(m.img)}"
-             sizes="(max-width: 720px) 68vw, 360px" alt="${esc(m.name)} sample"
-             loading="lazy" decoding="async" draggable="false">`,
-      caption_: (m) => `
-        <span class="cflow__label">${esc(m.use)}</span>
-        <span class="cflow__title">${esc(m.name)}</span>
-        <p class="cflow__text">${esc(m.desc)}</p>
-        <a class="cflow__cta" href="${waLink(
-          `Hello Luxury Media Wall, I am interested in a media wall in ${m.name}.`
-        )}" target="_blank" rel="noopener">Enquire about ${esc(m.name)}
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>`
+  /* ================================================ 18b. MATERIALS MORPH */
+  /* The materials gallery. Each sample dissolves into the next through an
+     fbm noise field in one WebGL pass: every pixel gets a threshold from the
+     noise, progress sweeps past those thresholds, and the threshold is
+     biased by the brightness of the INCOMING photograph - so its lit areas
+     burn through first instead of the whole frame fading uniformly.
+
+     Ported from a React component to plain JS; the shader is unchanged,
+     React only ever held the index. If WebGL is missing, or the textures
+     cannot be uploaded, the same photographs cross-fade instead - a gallery
+     without the effect beats a black rectangle. */
+  const MORPH_VERT = `
+attribute vec2 a_position;
+varying vec2 v_uv;
+void main() {
+  v_uv = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+
+  const MORPH_FRAG = `
+precision highp float;
+
+uniform sampler2D u_from;
+uniform sampler2D u_to;
+uniform float u_progress;
+uniform vec2 u_resolution;
+uniform float u_fromAspect;
+uniform float u_toAspect;
+uniform float u_scale;
+uniform float u_direction;
+uniform float u_edge;
+uniform float u_drift;
+
+varying vec2 v_uv;
+
+vec3 permute(vec3 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
+
+float snoise(vec2 v) {
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                     -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy));
+  vec2 x0 = v - i + dot(i, C.xx);
+  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+  vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+  m = m * m; m = m * m;
+  vec3 x  = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h  = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+float fbm(vec2 v) {
+  float value = 0.0;
+  float amplitude = 0.5;
+  for (int i = 0; i < 5; i++) {
+    value += amplitude * snoise(v);
+    v *= 2.0;
+    amplitude *= 0.5;
+  }
+  return value;
+}
+
+/* The drift below pushes UVs past the edge of the photograph, and
+   CLAMP_TO_EDGE answers that by smearing the last row of pixels into long
+   streaks. Reflecting keeps real picture there. Done in the shader because
+   MIRRORED_REPEAT is illegal on the non-power-of-two sizes photos come in. */
+vec2 mirror(vec2 uv) { return 1.0 - abs(1.0 - mod(uv, 2.0)); }
+
+vec2 coverUV(vec2 uv, float imgAspect) {
+  float canvasAspect = u_resolution.x / u_resolution.y;
+  vec2 scale = (canvasAspect > imgAspect)
+    ? vec2(1.0, imgAspect / canvasAspect)
+    : vec2(canvasAspect / imgAspect, 1.0);
+  return mirror((uv - 0.5) * scale + 0.5);
+}
+
+void main() {
+  /* Widen the sweep by one edge at each end, so progress 0 and 1 are fully
+     one photograph or the other rather than already half dissolved. */
+  float adjusted = u_progress * (1.0 + 2.0 * u_edge) - u_edge;
+
+  float noise = fbm(v_uv * u_scale + vec2(0.0, u_progress * u_direction)) * 0.5 + 0.5;
+  noise = smoothstep(0.0, 2.0,
+    length(texture2D(u_to, coverUV(v_uv, u_toAspect)).rgb) + noise);
+
+  float mixFactor = 1.0 - smoothstep(adjusted - u_edge, adjusted + u_edge, noise);
+
+  /* Both frames slide, by different amounts and in opposite directions, so
+     the tatters have parallax against each other. */
+  vec2 fromUV = coverUV(v_uv + vec2(0.0, noise * u_progress * u_drift * u_direction), u_fromAspect);
+  vec2 toUV = coverUV(v_uv + vec2(0.0, noise * (1.0 - u_progress) * -0.5 * u_drift * u_direction), u_toAspect);
+
+  gl_FragColor = mix(texture2D(u_from, fromUV), texture2D(u_to, toUV), mixFactor);
+}`;
+
+  /* Quintic in-out: the dissolve starts and ends still, and hurries the middle. */
+  const easeInOutQuint = (t) => {
+    const x = Math.min(Math.max(t, 0), 1);
+    return x < .5 ? 16 * x ** 5 : 1 - (-2 * x + 2) ** 5 / 2;
+  };
+
+  function initMaterialsMorph() {
+    const root = $('#materialsMorph');
+    const canvas = $('#materialsCanvas');
+    const plain = $('#materialsPlain');
+    const thumbs = $('#materialsThumbs');
+    const caption = $('#materialsCaption');
+    if (!root || !canvas || typeof MATERIALS === 'undefined' || !MATERIALS.length) return;
+
+    const items = MATERIALS;
+    const total = items.length;
+    let active = 0;
+    let autoTimer = null;
+    let paused = false;
+
+    /* ---- strip, caption, fallback frames ---- */
+    thumbs.innerHTML = items.map((m, i) => `
+      <li>
+        <button type="button" class="morph__thumb" data-go="${i}"
+                aria-current="${i === 0}" aria-label="Show ${esc(m.name)}">
+          <img src="${asset(m.img + '-480.jpg')}" alt="" loading="lazy" decoding="async" draggable="false">
+        </button>
+      </li>
+    `).join('');
+
+    plain.innerHTML = items.map((m, i) => `
+      <img src="${asset(m.img + '-1400.jpg')}" alt="${esc(m.name)} sample"
+           class="${i === 0 ? 'is-on' : ''}" loading="${i ? 'lazy' : 'eager'}" decoding="async" draggable="false">
+    `).join('');
+    const plainFrames = $$('img', plain);
+    const thumbBtns = $$('.morph__thumb', thumbs);
+
+    function paint(i) {
+      const m = items[i];
+      if (caption) {
+        caption.innerHTML = `
+          <span class="cflow__label">${esc(m.use)}</span>
+          <span class="cflow__title">${esc(m.name)}</span>
+          <p class="cflow__text">${esc(m.desc)}</p>
+          <a class="cflow__cta" href="${waLink(
+            `Hello Luxury Media Wall, I am interested in a media wall in ${m.name}.`
+          )}" target="_blank" rel="noopener">Enquire about ${esc(m.name)}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>`;
+      }
+      thumbBtns.forEach((b, n) => b.setAttribute('aria-current', String(n === i)));
+      plainFrames.forEach((img, n) => img.classList.toggle('is-on', n === i));
+      const t = thumbBtns[i];
+      if (t && thumbs.scrollWidth > thumbs.clientWidth) {
+        thumbs.scrollTo({ left: t.offsetLeft - (thumbs.clientWidth - t.offsetWidth) / 2, behavior: REDUCED ? 'auto' : 'smooth' });
+      }
+    }
+
+    /* A transition is requested here and consumed by the render loop. */
+    let request = null;
+    function go(next) {
+      const wrapped = ((next % total) + total) % total;
+      if (wrapped === active) return;
+      request = { from: active, to: wrapped };
+      active = wrapped;
+      paint(active);
+    }
+
+    /* ---- controls ---- */
+    const prev = $('#materialsPrev');
+    const next = $('#materialsNext');
+    if (prev) prev.addEventListener('click', () => { go(active - 1); restart(); });
+    if (next) next.addEventListener('click', () => { go(active + 1); restart(); });
+    thumbs.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-go]');
+      if (b) { go(Number(b.dataset.go)); restart(); }
     });
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(active - 1); restart(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); go(active + 1); restart(); }
+    });
+
+    let swipeFrom = null;
+    root.addEventListener('pointerdown', (e) => { swipeFrom = e.clientX; });
+    root.addEventListener('pointerup', (e) => {
+      const from = swipeFrom;
+      swipeFrom = null;
+      if (from === null) return;
+      const dx = e.clientX - from;
+      if (Math.abs(dx) > 48) { go(active + (dx < 0 ? 1 : -1)); restart(); }
+    });
+
+    /* ---- autoplay: never while hidden, hovered, focused or off screen ---- */
+    function restart() {
+      clearInterval(autoTimer);
+      autoTimer = null;
+      if (REDUCED || paused || document.hidden) return;
+      autoTimer = setInterval(() => go(active + 1), 5200);
+    }
+    const hold = (on) => { paused = on; restart(); };
+    root.addEventListener('mouseenter', () => hold(true));
+    root.addEventListener('mouseleave', () => hold(false));
+    root.addEventListener('focusin', () => hold(true));
+    root.addEventListener('focusout', () => hold(false));
+    document.addEventListener('visibilitychange', restart);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => hold(!entries[0].isIntersecting), { threshold: .15 }).observe(root);
+    } else {
+      restart();
+    }
+
+    paint(0);
+
+    /* ---- WebGL ---- */
+    const gl = canvas.getContext('webgl', { alpha: false, antialias: false });
+    const fallBack = () => { root.classList.add('is-plain'); };
+    if (!gl) { fallBack(); return; }
+
+    const compile = (type, src) => {
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        gl.deleteShader(sh);
+        throw new Error('shader compile failed');
+      }
+      return sh;
+    };
+
+    let program;
+    try {
+      const vert = compile(gl.VERTEX_SHADER, MORPH_VERT);
+      const frag = compile(gl.FRAGMENT_SHADER, MORPH_FRAG);
+      program = gl.createProgram();
+      gl.attachShader(program, vert);
+      gl.attachShader(program, frag);
+      gl.linkProgram(program);
+      /* The shaders belong to the program once attached; drop our handles so
+         they are freed with it. */
+      gl.deleteShader(vert);
+      gl.deleteShader(frag);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error('program link failed');
+    } catch (err) { fallBack(); return; }
+
+    gl.useProgram(program);
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(program, 'a_position');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    const uniforms = {};
+    ['from', 'to', 'progress', 'resolution', 'fromAspect', 'toAspect', 'scale', 'direction', 'edge', 'drift']
+      .forEach((n) => { uniforms[n] = gl.getUniformLocation(program, 'u_' + n); });
+
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+    const textures = items.map(() => null);
+    const aspects = items.map(() => 1);
+    let running = false;
+    let refused = 0;
+    let raf = 0;
+    let from = 0, to = 0, progress = 1, startedAt = 0, direction = 1;
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.round(canvas.clientWidth * dpr);
+      const h = Math.round(canvas.clientHeight * dpr);
+      if (!w || !h || (canvas.width === w && canvas.height === h)) return;
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    }
+
+    /* Until every photograph is in, `from` or `to` can point at a hole.
+       Showing the nearest texture that does exist beats binding null. */
+    const pick = (i) => textures[i] || textures.find((t) => t) || null;
+
+    function draw() {
+      if (request) {
+        const r = request;
+        request = null;
+        from = r.from;
+        to = r.to;
+        progress = 0;
+        startedAt = performance.now();
+        /* Direction follows the shortest way round, so the wrap from the last
+           sample to the first drifts forward like every other step. */
+        direction = (((r.to - r.from + total) % total) * 2 <= total) ? 1 : -1;
+      }
+
+      if (progress < 1) {
+        const span = REDUCED ? 0 : 1500;
+        progress = span === 0 ? 1 : easeInOutQuint((performance.now() - startedAt) / span);
+      }
+
+      const fromTex = pick(from);
+      const toTex = pick(to);
+      if (!fromTex || !toTex) return;
+
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, fromTex);
+      gl.uniform1i(uniforms.from, 0);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, toTex);
+      gl.uniform1i(uniforms.to, 1);
+
+      gl.uniform1f(uniforms.progress, progress);
+      gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
+      gl.uniform1f(uniforms.fromAspect, aspects[from] || 1);
+      gl.uniform1f(uniforms.toAspect, aspects[to] || 1);
+      gl.uniform1f(uniforms.scale, 3.5);
+      gl.uniform1f(uniforms.direction, direction);
+      gl.uniform1f(uniforms.edge, .15);
+      gl.uniform1f(uniforms.drift, .5);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    function frame() {
+      draw();
+      raf = requestAnimationFrame(frame);
+    }
+
+    /* Each photograph is uploaded the moment it arrives and the loop starts
+       on the first one, rather than waiting for the slowest. */
+    items.forEach((m, i) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        /* Photographs are not powers of two, so mipmaps and repeat are both
+           off the table in WebGL1: clamp and linear are the only legal pair. */
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        textures[i] = tex;
+        aspects[i] = img.naturalWidth / Math.max(img.naturalHeight, 1);
+        if (!running) {
+          running = true;
+          resize();
+          root.classList.add('is-live');
+          raf = requestAnimationFrame(frame);
+        }
+      };
+      /* One broken photograph costs one sample, not the effect; only when
+         none of them load is there nothing to shade. */
+      img.onerror = () => { refused += 1; if (refused === total) fallBack(); };
+      img.src = asset(m.img + '-1400.jpg');
+    });
+
+    window.addEventListener('resize', resize);
+    /* A restored context has nothing in it, so the only honest answer is to
+       stop shading and show the photographs plainly. */
+    canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); cancelAnimationFrame(raf); fallBack(); });
   }
 
   /* ======================================================= 19. COVERFLOW */
@@ -1409,38 +1748,6 @@
     play();
   }
 
-  /* ======================================================== 20. SHOWCASE */
-  /* Deals every photograph into the drifting corridor behind the studio
-     statement. Each card runs the same animation; spacing them evenly by
-     animation-delay across one cycle is what turns twelve independent
-     loops into a single continuous stream.
-
-     A NEGATIVE delay is the important part: it starts each card partway
-     through its path rather than making the reader wait for the queue to
-     fill, so the corridor is already populated on the first frame. */
-  function renderShowcase() {
-    const inner = $('#showcaseInner');
-    if (!inner || typeof SHOWCASE === 'undefined' || !SHOWCASE.length) return;
-
-    /* Reduced motion: the CSS hides the stage, so building twelve image
-       elements that will never be seen is wasted bandwidth. */
-    if (REDUCED) return;
-
-    const dur = (typeof SHOWCASE_SECONDS === 'number' ? SHOWCASE_SECONDS : 22);
-    const step = dur / SHOWCASE.length;
-    inner.style.setProperty('--showcase-dur', dur + 's');
-
-    inner.innerHTML = SHOWCASE.map((s, i) => `
-      <div class="showcase__card"
-           style="animation-name:${i % 2 ? 'showcaseL' : 'showcaseR'};
-                  animation-delay:-${(i * step).toFixed(2)}s">
-        <img src="${asset(s.img + '-480.jpg')}"
-             srcset="${srcsetCard(s.img)}" sizes="20vw"
-             loading="lazy" decoding="async" alt="${esc(s.alt || '')}">
-      </div>
-    `).join('');
-  }
-
   /* ========================================================= 19. MARQUEE */
   function initMarquee() {
     const track = $('#marqueeTrack');
@@ -1456,7 +1763,7 @@
     renderTransforms();
     initServicesFlow();
     initJourney();
-    initMaterialsFlow();
+    initMaterialsMorph();
     renderWallGuide();
     renderQuotes();
     renderSignature();
@@ -1470,7 +1777,6 @@
     initFilm();
     initForm();
     initCoverflow();
-    renderShowcase();
     initMarquee();
     initFloat();
 

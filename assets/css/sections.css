@@ -30,95 +30,6 @@
 .marquee__group span::after { content: ""; width: 4px; height: 4px; background: var(--champagne); border-radius: 50%; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
-/* ==================== SHOWCASE (drifting photo corridor) ================ */
-/* Cards start far behind the page and travel toward the reader, drifting
-   outward to the left or right lane as they come. Two mirrored paths, one
-   per lane; the stagger between cards is set in JS from SHOWCASE_SECONDS.
-
-   Distances are in cqw - percentages of this section's own width - so the
-   whole construction scales with the container rather than the viewport,
-   and the geometry holds identically on a phone and a 27in monitor. */
-.showcase {
-  position: relative; overflow: hidden;
-  container-type: inline-size;
-  background: var(--ink); color: var(--ivory);
-  isolation: isolate;
-  /* Every child is absolutely positioned, so the band has no content to
-     stand it up. Tall enough for a card to arrive, pass and leave. */
-  height: clamp(480px, 66vh, 820px);
-}
-.showcase__stage {
-  position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  perspective: 30cqw; perspective-origin: 50% 52%;
-}
-.showcase__inner { position: absolute; inset: 0; transform-style: preserve-3d; }
-
-.showcase__card {
-  position: absolute; left: 50%; top: 52%;
-  /* Half the width and height are negated in the margins so the card stays
-     centred on its own path; change one and the other three must follow. */
-  width: 38cqw; height: 52cqw; margin-left: -19cqw; margin-top: -26cqw;
-  overflow: hidden; backface-visibility: hidden;
-  border: 1px solid rgba(245, 242, 236, .1);
-  animation-duration: var(--showcase-dur, 22s);
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-.showcase__card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-/* Right-hand lane. Sweeps out to the right as it approaches.
-
-   The starting depth matters more than the card size for how large these
-   read. Perspective scale is 30 / (30 - z), so a card starting at -258cqw
-   is drawn at roughly a ninth of its size and stays small for most of the
-   trip. Starting at -132cqw it enters at about a fifth instead, and every
-   photograph spends far longer at a legible size. */
-@keyframes showcaseR {
-  from { transform: translate3d(-11cqw, 0, -132cqw) rotateY(-6deg); }
-  to   { transform: translate3d(44cqw, 0, 14cqw) rotateY(-28deg); }
-}
-/* Left-hand lane: the same path mirrored. */
-@keyframes showcaseL {
-  from { transform: translate3d(11cqw, 0, -132cqw) rotateY(6deg); }
-  to   { transform: translate3d(-44cqw, 0, 14cqw) rotateY(28deg); }
-}
-
-/* With no copy set over the band, the scrim's only job is to feather the
-   top and bottom edges into the ink so cards enter and leave the frame
-   rather than being cut off by a hard border. The centre stays clear. */
-.showcase__scrim {
-  position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: linear-gradient(to bottom,
-    var(--ink) 0%, rgba(13,13,13,.12) 15%,
-    rgba(13,13,13,.12) 85%, var(--ink) 100%);
-}
-
-/* Because the geometry is expressed in cqw, a 375px container shrinks the
-   whole corridor to match: cards spent most of their life under 40px wide,
-   reading as specks rather than photographs. Phones get a wider card and a
-   shorter corridor, so each picture arrives large enough to recognise. */
-@media (max-width: 720px) {
-  .showcase__card {
-    width: 76cqw; height: 102cqw; margin-left: -38cqw; margin-top: -51cqw;
-  }
-
-  @keyframes showcaseR {
-    from { transform: translate3d(-8cqw, 0, -74cqw) rotateY(-5deg); }
-    to   { transform: translate3d(52cqw, 0, 12cqw) rotateY(-26deg); }
-  }
-  @keyframes showcaseL {
-    from { transform: translate3d(8cqw, 0, -74cqw) rotateY(5deg); }
-    to   { transform: translate3d(-52cqw, 0, 12cqw) rotateY(26deg); }
-  }
-}
-
-/* A corridor of moving photographs is exactly what reduced motion is for.
-   The cards stop where they are and the section reads as a still collage. */
-@media (prefers-reduced-motion: reduce) {
-  .showcase__card { animation: none !important; }
-  .showcase__stage { display: none; }
-}
-
 /* ======================= INTRO / STUDIO STATEMENT ======================= */
 .intro { display: grid; grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); gap: clamp(2.5rem, 6vw, 6rem); align-items: start; }
 
@@ -1308,3 +1219,68 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
 .journey__item.is-live .journey__num { color: var(--champagne-dim); }
 .journey__copy h3 { margin-top: .9rem; font-size: clamp(1.1rem, 1.5vw, 1.35rem); color: var(--ink); }
 .journey__copy p { margin-top: .6rem; font-size: .88rem; line-height: 1.7; color: var(--muted); }
+
+/* =========================== MATERIALS MORPH ============================ */
+/* The gallery is a single canvas; the photographs live in WebGL textures.
+   .is-live fades the canvas in once the first texture has landed, and
+   .is-plain swaps to stacked <img> frames when WebGL is unavailable. */
+.morph { position: relative; }
+.morph__stage {
+  position: relative; aspect-ratio: 3 / 2; overflow: hidden;
+  background: var(--ink); isolation: isolate;
+}
+.morph__canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+  opacity: 0; transition: opacity .5s var(--ease-soft);
+}
+.morph.is-live .morph__canvas { opacity: 1; }
+.morph.is-plain .morph__canvas { display: none; }
+
+.morph__plain { position: absolute; inset: 0; display: none; }
+.morph.is-plain .morph__plain { display: block; }
+.morph__plain img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity .7s var(--ease-soft);
+}
+.morph__plain img.is-on { opacity: 1; }
+
+.morph__scrim {
+  position: absolute; inset: auto 0 0; height: 45%; z-index: 2; pointer-events: none;
+  background: linear-gradient(to top, rgba(9,9,9,.74), rgba(9,9,9,0));
+}
+
+.morph__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 4;
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center; color: var(--white);
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.28);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: background-color .35s var(--ease);
+}
+.morph__arrow:hover { background: rgba(255,255,255,.26); }
+.morph__arrow svg { width: 20px; height: 20px; }
+.morph__arrow--prev { left: clamp(.6rem, 2vw, 1.6rem); }
+.morph__arrow--next { right: clamp(.6rem, 2vw, 1.6rem); }
+
+.morph__thumbs {
+  position: absolute; left: 0; right: 0; bottom: clamp(.8rem, 2vw, 1.4rem); z-index: 5;
+  display: flex; gap: .5rem; justify-content: center;
+  margin: 0; padding: 0 1rem .4rem; list-style: none;
+  overflow-x: auto; scrollbar-width: thin;
+}
+.morph__thumb {
+  display: block; flex: none; width: 74px; height: 52px; padding: 0; overflow: hidden;
+  border: 2px solid transparent; opacity: .55;
+  transition: opacity .35s var(--ease), border-color .35s var(--ease);
+}
+.morph__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.morph__thumb:hover { opacity: .9; }
+.morph__thumb[aria-current="true"] { opacity: 1; border-color: var(--champagne); }
+
+.morph .cflow__caption { margin-top: 1.7rem; }
+
+@media (max-width: 720px) {
+  .morph__stage { aspect-ratio: 4 / 5; }
+  .morph__arrow { width: 40px; height: 40px; }
+  .morph__thumb { width: 56px; height: 40px; }
+}

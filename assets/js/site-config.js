@@ -76,40 +76,6 @@ const MEDIA = {
   reelVideo:  'assets/video/luxury-media-wall-film.mp4' // "Watch the transformation" section
 };
 
-/* ------------------------------------------------------------- SHOWCASE */
-/* The drifting photograph corridor behind the studio statement. Cards are
-   dealt alternately to the left and right lane and travel from far behind
-   the page toward the reader, so the whole set passes through the section
-   one photograph at a time.
-
-   Order matters: neighbours in this list appear on opposite sides at the
-   same moment, so light and dark schemes alternate to keep pairs varied. */
-const SHOWCASE = [
-  { img: 'assets/img/showcase-fireplace-marble',  alt: 'Book-matched marble media wall with a linear fireplace and walnut display niches' },
-  { img: 'assets/img/showcase-black-fluted',      alt: 'Black fluted media wall with brass trim and lit walnut display shelving' },
-  { img: 'assets/img/showcase-white-floating',    alt: 'White floating TV unit with lit oak niches overlooking the Dubai coast' },
-  { img: 'assets/img/showcase-led-stone',         alt: 'Charcoal stone and walnut slat media wall with linear LED detailing' },
-  { img: 'assets/img/showcase-beige-arched',      alt: 'Soft beige TV wall framed by curved cabinets with lit arched niches' },
-  { img: 'assets/img/showcase-walnut-display',    alt: 'Walnut media wall with glass display cabinets and a travertine centre panel' },
-  { img: 'assets/img/showcase-travertine',        alt: 'Full-height travertine TV wall with a floating walnut unit and LED base' },
-  { img: 'assets/img/showcase-stone-black',       alt: 'Split-face stone feature wall with a backlit television and black cabinet' },
-  { img: 'assets/img/showcase-panelled-gold',     alt: 'Cream panelled media wall with brass inlays and walnut side cabinets' },
-  { img: 'assets/img/showcase-room-divider',      alt: 'Double-sided walnut and travertine TV unit dividing an open-plan penthouse' },
-  { img: 'assets/img/showcase-fluted-oak',        alt: 'Light oak fluted media wall with lit niches and a floating oak unit' },
-  { img: 'assets/img/showcase-hotel-walnut',      alt: 'Hotel-style walnut media wall with fabric panels and lit glass shelves' },
-  { img: 'assets/img/showcase-vertical-garden',   alt: 'Walnut and travertine media wall with an integrated vertical garden' },
-  { img: 'assets/img/showcase-asymmetric',        alt: 'Asymmetric media wall in travertine, charcoal and walnut with floating shelves' },
-  { img: 'assets/img/showcase-curved-walnut',     alt: 'Curved fluted walnut media wall with a sweeping low cabinet' },
-  { img: 'assets/img/showcase-concrete-walnut',   alt: 'Board-formed concrete TV wall with walnut panelling and lit shelving' },
-  { img: 'assets/img/showcase-ribbed-oak',        alt: 'Ribbed oak media wall with lit display niches and a white floating unit' },
-  { img: 'assets/img/showcase-mirror-travertine', alt: 'Walnut and travertine TV wall framed by bronze mirror panels' },
-  { img: 'assets/img/showcase-floating-oak',      alt: 'Oak panelled media wall with floating lit shelves and a long oak unit' }
-];
-
-/* One full pass from the far distance to the foreground, in seconds. Scaled
-   with the number of photographs so the spacing between cards stays even. */
-const SHOWCASE_SECONDS = 34;
-
 /* --------------------------------------------------------------- PROJECTS */
 /* Separate projects, one photograph each. DESIGN_TRAITS below refers to
    these by index, so keep the two lists in the same order. */
