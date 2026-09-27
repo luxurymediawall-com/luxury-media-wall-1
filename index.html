@@ -228,6 +228,38 @@
   <div class="showcase__scrim"></div>
 </div>
 
+<!-- ===================================================== JOURNEY ======= -->
+<!-- The design process as a pinned horizontal run: the section holds the
+     screen while the track slides sideways, and each stage draws its stem
+     and lifts its copy as it reaches the middle. Stages come from PROCESS
+     in site-config.js. Narrow screens and reduced motion get the same
+     content as a plain vertical list - see initJourney in main.js. -->
+<section class="journey" id="process" aria-labelledby="journeyTitle">
+  <div class="journey__pin">
+    <div class="journey__track" id="journeyTrack">
+      <div class="journey__intro">
+        <p class="eyebrow">How It Works</p>
+        <h2 class="h1 mt-6" id="journeyTitle">The design process</h2>
+        <p class="lede mt-6">
+          Six stages from first conversation to final reveal. You see drawings and
+          physical samples before anything is cut.
+        </p>
+      </div>
+
+      <figure class="journey__photo">
+        <img src="assets/img/showcase-fluted-oak-900.jpg"
+             srcset="assets/img/showcase-fluted-oak-480.jpg 480w, assets/img/showcase-fluted-oak-900.jpg 900w"
+             sizes="(max-width: 720px) 86vw, 30vw" loading="lazy" decoding="async"
+             alt="Light oak fluted media wall with lit niches and a floating oak unit">
+      </figure>
+
+      <ol class="journey__items" id="journeyItems">
+        <!-- rendered from PROCESS in site-config.js -->
+      </ol>
+    </div>
+  </div>
+</section>
+
 <!-- ======================================================= ABOUT ======= -->
 <section class="section" id="about">
   <div class="shell intro">
@@ -412,27 +444,7 @@
   </div>
 </section>
 
-<!-- ===================================================== PROCESS ======= -->
-<section class="section bg-white">
-  <div class="shell relative z-10">
-    <div class="section-head section-head--split">
-      <div>
-        <p class="eyebrow" data-reveal>How It Works</p>
-        <h2 class="h1 mt-6 reveal-words" data-reveal="fade">The design process</h2>
-      </div>
-      <div class="section-head__aside">
-        <p class="lede" data-reveal>
-          Six stages from first conversation to final reveal. You see drawings and
-          physical samples before anything is cut.
-        </p>
-      </div>
-    </div>
-
-    <div class="process__grid" id="processGrid">
-      <!-- rendered from PROCESS in site-config.js -->
-    </div>
-  </div>
-</section>
+<!-- The design process now runs as the pinned JOURNEY section above. -->
 
 <!-- ================================================ CONFIGURATOR ======= -->
 <section class="section on-dark" id="media-walls" style="background:#0d0d0d">

@@ -522,17 +522,83 @@
 
 
   /* =================================================== 8. RENDER: PROCESS */
-  function renderProcess() {
-    const grid = $('#processGrid');
-    if (!grid) return;
-    grid.innerHTML = PROCESS.map((s, i) => `
-      <article class="step" data-reveal style="--reveal-delay:${(i % 3) * 100}ms">
-        <span class="step__num">${s.n}</span>
-        <h3>${esc(s.title)}</h3>
-        <p>${esc(s.text)}</p>
-        <span class="step__bar"></span>
-      </article>
+  /* The process as a pinned horizontal run. The section is given a height of
+     one screen plus the distance the track overflows, so the scroll that
+     happens while it is stuck maps one-to-one onto the sideways slide.
+
+     Below 720px, with reduced motion, or when the track already fits, the
+     pin is dropped and the same markup reads as a plain vertical list. */
+  function initJourney() {
+    const section = $('#process');
+    const track = $('#journeyTrack');
+    const list = $('#journeyItems');
+    if (!section || !track || !list || typeof PROCESS === 'undefined') return;
+
+    list.innerHTML = PROCESS.map((s, i) => `
+      <li class="journey__item journey__item--${i % 2 ? 'down' : 'up'}">
+        <span class="journey__marker" aria-hidden="true">
+          <span class="journey__dot"></span><span class="journey__stem"></span>
+        </span>
+        <div class="journey__copy">
+          <span class="journey__num">${esc(s.n)}</span>
+          <h3>${esc(s.title)}</h3>
+          <p>${esc(s.text)}</p>
+        </div>
+      </li>
     `).join('');
+
+    const items = $$('.journey__item', list);
+    let span = 0;          /* how far the track has to travel */
+    let pinned = false;
+    let ticking = false;
+
+    /* A stage lights up once it has crossed most of the screen. */
+    function reveal() {
+      items.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const passed = pinned
+          ? r.left < window.innerWidth * .78
+          : r.top < window.innerHeight * .85;
+        el.classList.toggle('is-live', passed);
+      });
+    }
+
+    function frame() {
+      ticking = false;
+      if (pinned && span > 0) {
+        const p = Math.min(Math.max(-section.getBoundingClientRect().top / span, 0), 1);
+        track.style.transform = `translate3d(${(-p * span).toFixed(1)}px, 0, 0)`;
+      }
+      reveal();
+    }
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(frame);
+    };
+
+    function measure() {
+      /* Measured with the track back at zero, or the transform counts twice. */
+      track.style.transform = '';
+      pinned = window.innerWidth > 720 && !REDUCED;
+      if (pinned) {
+        section.classList.add('is-pinned');
+        span = Math.max(0, track.scrollWidth - window.innerWidth);
+        pinned = span > 0;
+      }
+      section.classList.toggle('is-pinned', pinned);
+      section.style.height = pinned ? (window.innerHeight + span) + 'px' : '';
+      frame();
+    }
+
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', measure);
+    /* A photograph that lands late changes how wide the track is. */
+    $$('img', track).forEach((img) => {
+      if (!img.complete) img.addEventListener('load', measure, { once: true });
+    });
   }
 
   /* ============================================== 10. RENDER: WALL GUIDE */
@@ -1389,7 +1455,7 @@
     renderContactBits();
     renderTransforms();
     initServicesFlow();
-    renderProcess();
+    initJourney();
     initMaterialsFlow();
     renderWallGuide();
     renderQuotes();
