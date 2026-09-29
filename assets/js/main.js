@@ -984,6 +984,46 @@
     });
   }
 
+  /* ============================================== 13b. REVIEW FORM */
+  /* Anyone can write a review here. The page is static, so there is nowhere
+     to store one: the review is handed to WhatsApp fully written out - the
+     same route the enquiry form takes - and the studio adds it to
+     TESTIMONIALS once the project is confirmed. */
+  function initReviewForm() {
+    const form = $('#reviewForm');
+    if (!form) return;
+    const status = $('#reviewStatus');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      let ok = true;
+      $$('[required]', form).forEach((f) => {
+        const bad = !f.value.trim();
+        f.closest('.field').classList.toggle('has-error', bad);
+        if (bad && ok) { f.focus(); ok = false; }
+      });
+      if (!ok) return;
+
+      const val = (sel) => (($(sel, form) || {}).value || '').trim();
+      const picked = form.querySelector('[name="rating"]:checked');
+      const rating = Math.min(5, Math.max(1, Number(picked && picked.value) || 5));
+
+      const lines = [
+        'New review for Luxury Media Wall',
+        '',
+        'Name: ' + val('#rName'),
+        val('#rWhere') ? 'Project: ' + val('#rWhere') : '',
+        'Rating: ' + '★'.repeat(rating) + '☆'.repeat(5 - rating) + ` (${rating}/5)`,
+        '',
+        val('#rText')
+      ].filter(Boolean);
+
+      window.open(waLink(lines.join('\n')), '_blank', 'noopener');
+      form.reset();
+      if (status) status.textContent = 'Thank you — your review is on its way to the studio.';
+    });
+  }
   /* ==================================================== 14. ENQUIRY FORM */
   function initForm() {
     const form = $('#enquiryForm');
@@ -1890,6 +1930,7 @@ void main() {
     initLoopFilm('#whyVideo');
     initFilm();
     initForm();
+    initReviewForm();
     initCoverflow();
     initMarquee();
     initFloat();

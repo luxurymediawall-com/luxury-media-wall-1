@@ -714,6 +714,56 @@
     <div class="quotes__grid" id="quotesGrid">
       <!-- rendered from TESTIMONIALS in site-config.js -->
     </div>
+
+    <!-- Anyone can write a review here. The page is static, so nothing is
+         stored in the browser: the review is handed to WhatsApp fully
+         written out, exactly as the enquiry form does, and the studio adds
+         it to TESTIMONIALS once it is confirmed. -->
+    <div class="review" id="review">
+      <div class="review__intro">
+        <h3 class="review__title">Worked with us? Leave a review</h3>
+        <p class="review__note">
+          It reaches the studio straight away. We add it to this page once we have
+          confirmed the project.
+        </p>
+      </div>
+
+      <form class="review__form" id="reviewForm" novalidate>
+        <div class="field">
+          <label for="rName">Your name</label>
+          <input id="rName" name="name" type="text" autocomplete="name" required>
+          <span class="field__error">Please add your name</span>
+        </div>
+
+        <div class="field">
+          <label for="rWhere">Area or project <span>(optional)</span></label>
+          <input id="rWhere" name="where" type="text" placeholder="Business Bay · Marble media wall">
+        </div>
+
+        <fieldset class="rating">
+          <legend>Your rating</legend>
+          <div class="rating__stars">
+            <input type="radio" id="r5" name="rating" value="5" checked><label for="r5" aria-label="Five stars"></label>
+            <input type="radio" id="r4" name="rating" value="4"><label for="r4" aria-label="Four stars"></label>
+            <input type="radio" id="r3" name="rating" value="3"><label for="r3" aria-label="Three stars"></label>
+            <input type="radio" id="r2" name="rating" value="2"><label for="r2" aria-label="Two stars"></label>
+            <input type="radio" id="r1" name="rating" value="1"><label for="r1" aria-label="One star"></label>
+          </div>
+        </fieldset>
+
+        <div class="field field--wide">
+          <label for="rText">Your review</label>
+          <textarea id="rText" name="review" rows="4" required
+                    placeholder="What we built, how it went, how it looks now."></textarea>
+          <span class="field__error">Please write a few words</span>
+        </div>
+
+        <div class="review__send">
+          <button class="btn btn--gold" type="submit"><span>Send My Review</span></button>
+          <p class="review__status" id="reviewStatus" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
   </div>
 </section>
 
