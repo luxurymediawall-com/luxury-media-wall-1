@@ -227,6 +227,37 @@
   </div>
   <div class="showcase__scrim"></div>
 </div>
+
+<!-- ================================================= GLASS GALLERY ===== -->
+<!-- The project photographs in one endless row, drawn on a WebGL canvas and
+     seen through a liquid-glass lens. Without WebGL the strip below the
+     canvas is the gallery - see glass-carousel.js. -->
+<section class="section glass-band">
+  <div class="shell">
+    <div class="section-head section-head--split">
+      <div>
+        <p class="eyebrow" data-reveal>Through The Glass</p>
+        <h2 class="h1 mt-6 reveal-words" data-reveal="fade">Walk the wall</h2>
+      </div>
+      <div class="section-head__aside">
+        <p class="lede" data-reveal>
+          Drag the row. Click a photograph to bring it to the middle, then click
+          it again to hold it open.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass" id="glass" tabindex="0" role="region"
+       aria-roledescription="carousel" aria-label="Projects seen through glass">
+    <canvas class="glass__canvas" id="glassCanvas" aria-hidden="true"></canvas>
+    <ul class="glass__strip" id="glassStrip"></ul>
+    <p class="glass__title" id="glassTitle" aria-live="polite"></p>
+    <p class="glass__count" id="glassCount"></p>
+    <span class="glass__hint" id="glassHint" aria-hidden="true">View</span>
+    <button type="button" class="glass__close" id="glassClose">Close</button>
+  </div>
+</section>
 <!-- ===================================================== JOURNEY ======= -->
 <!-- The design process as a pinned horizontal run: the section holds the
      screen while the track slides sideways, and each stage draws its stem
@@ -915,5 +946,6 @@
 <script src="assets/js/site-config.js"></script>
 <script src="assets/js/signature.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/glass-carousel.js" defer></script>
 </body>
 </html>

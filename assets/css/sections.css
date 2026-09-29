@@ -1372,3 +1372,66 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   .morph__arrow { width: 40px; height: 40px; }
   .morph__thumb { width: 56px; height: 40px; }
 }
+
+/* ============================= GLASS GALLERY ============================ */
+/* The canvas covers the strip once it is running (.is-live). Until then -
+   and on any browser without WebGL - the strip below it is the gallery. */
+.glass-band { padding-bottom: 0; }
+.glass {
+  position: relative; margin-top: clamp(1.6rem, 3vw, 2.6rem);
+  height: clamp(440px, 62vh, 680px);
+  background: var(--white); overflow: hidden; outline: none;
+}
+.glass:focus-visible { outline: 2px solid var(--champagne); outline-offset: -2px; }
+.glass__canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+  opacity: 0; transition: opacity .6s var(--ease-soft); touch-action: pan-y;
+}
+.glass.is-live .glass__canvas { opacity: 1; }
+.glass.is-over .glass__canvas { cursor: grab; }
+.glass.is-dragging .glass__canvas { cursor: grabbing; }
+
+/* Fallback and no-JS gallery: a plain horizontal strip. */
+.glass__strip {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; align-items: center; gap: .75rem;
+  margin: 0; padding: 0 var(--gutter); list-style: none;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+}
+.glass.is-live .glass__strip { display: none; }
+.glass__strip li { flex: none; scroll-snap-align: center; height: 78%; }
+.glass__strip img { height: 100%; width: auto; object-fit: cover; display: block; }
+
+.glass__title, .glass__count {
+  position: absolute; left: 50%; transform: translateX(-50%); z-index: 3;
+  margin: 0; color: var(--ink); text-align: center; pointer-events: none;
+}
+.glass__title {
+  top: 4.5%; font-family: var(--font-serif); font-size: clamp(1rem, 1.6vw, 1.3rem);
+}
+.glass__count {
+  bottom: 6%; font-size: .7rem; letter-spacing: .22em; font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+/* Follows the pointer while it is over a photograph. */
+.glass__hint {
+  position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none;
+  font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--ink);
+  opacity: 0; transform-origin: 0 0; transition: opacity .3s var(--ease);
+  margin: -.6rem 0 0 .9rem;
+}
+.glass.is-over .glass__hint { opacity: .85; }
+.glass.is-focused .glass__hint { opacity: 0; }
+
+.glass__close {
+  position: absolute; right: 4%; top: 4.5%; z-index: 4;
+  font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--ink);
+  opacity: 0; pointer-events: none; transition: opacity .3s var(--ease);
+}
+.glass.is-focused .glass__close { opacity: 1; pointer-events: auto; }
+
+@media (max-width: 720px) {
+  .glass { height: clamp(360px, 52vh, 480px); }
+  .glass__title { font-size: .95rem; }
+}
