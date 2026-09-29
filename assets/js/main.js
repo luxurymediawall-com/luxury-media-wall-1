@@ -181,7 +181,7 @@
      it stops on its opening frame rather than playing. It pauses whenever
      the hero is scrolled out of view.                                     */
   function initHeroVideo() {
-    const media = $('#revealMedia');
+    const media = $('#heroMedia');
     const video = $('#heroVideo');
     const src = (typeof MEDIA !== 'undefined') && MEDIA.heroVideo;
     if (!media || !video || !src) return;
