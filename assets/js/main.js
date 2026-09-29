@@ -218,6 +218,90 @@
     }
   }
 
+  /* The scroll opening. CSS pins the first screen; here the film is clipped
+     open, scaled down and faded across the section's scroll, the headline
+     clears early so type never sits over a half-open window, and the
+     photographs below travel against the scroll.
+
+     Ported from a React component built on Framer Motion and Lenis. Framer
+     only mapped scroll position onto a handful of values - that is the
+     arithmetic below - and Lenis only smoothed the wheel, which is the
+     browser's own job, so neither library is carried. Reduced motion leaves
+     every value alone and the hero reads as the plain film it was. */
+  function initHeroScroll() {
+    const hero = $('#home');
+    if (!hero || !hero.classList.contains('hero--scroll') || REDUCED) return;
+
+    const media = $('#heroMedia');
+    const inner = $('.hero__inner', hero);
+    const strip = $('.hero__strip', hero);
+    const cue = $('.scroll-cue', hero);
+    const shots = $$('.hero__px', hero);
+    if (!media) return;
+
+    const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+    let span = 1;
+    let top = 0;
+    let ticking = false;
+
+    function frame() {
+      ticking = false;
+      const p = clamp01((window.scrollY - top) / span);
+
+      /* The window opens over the first half, so the film reaches full
+         bleed well before it starts to leave. */
+      const open = clamp01(p / .5);
+      const c1 = 25 - 25 * open;
+      const c2 = 75 + 25 * open;
+      media.style.clipPath =
+        `polygon(${c1}% ${c1}%, ${c2}% ${c1}%, ${c2}% ${c2}%, ${c1}% ${c2}%)`;
+      media.style.transform = `scale(${(1.16 - .16 * open).toFixed(4)})`;
+      media.style.opacity = (1 - clamp01((p - .62) / .3)).toFixed(3);
+
+      const out = clamp01(p / .34);
+      const fade = (1 - out).toFixed(3);
+      if (inner) {
+        inner.style.opacity = fade;
+        inner.style.transform = `translateY(${(-40 * out).toFixed(1)}px)`;
+      }
+      if (strip) strip.style.opacity = fade;
+      if (cue) cue.style.opacity = fade;
+
+      const vh = window.innerHeight;
+      shots.forEach((img) => {
+        const r = img.getBoundingClientRect();
+        if (r.bottom < -vh || r.top > vh * 2) return;
+        const pr = clamp01((vh - r.top) / (vh + r.height));
+        const from = Number(img.dataset.start) || 0;
+        const to = Number(img.dataset.end) || 0;
+        const y = from + (to - from) * pr;
+        /* Each one shrinks and clears as it leaves, rather than cutting. */
+        const late = clamp01((pr - .75) / .25);
+        img.style.transform = `translateY(${y.toFixed(1)}px) scale(${(1 - .15 * late).toFixed(3)})`;
+        img.style.opacity = (1 - late).toFixed(3);
+      });
+    }
+
+    function measure() {
+      top = hero.getBoundingClientRect().top + window.scrollY;
+      span = Math.max(1, hero.offsetHeight - window.innerHeight);
+      frame();
+    }
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(frame);
+    };
+
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', measure);
+    /* A photograph that lands late changes how tall the section is. */
+    $$('img', hero).forEach((img) => {
+      if (!img.complete) img.addEventListener('load', measure, { once: true });
+    });
+  }
   /* ====================================================== 3. RENDER: HERO */
   function renderContactBits() {
     $$('[data-wa]').forEach((el) => {
@@ -1803,6 +1887,7 @@ void main() {
 
     initHeader();
     initHeroVideo();
+    initHeroScroll();
     initModal();
     initShare();
     initConfigurator();

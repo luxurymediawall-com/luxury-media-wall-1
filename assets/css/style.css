@@ -718,3 +718,50 @@ h1, h2, h3, h4 {
 @media (max-width: 420px) {
   .brand__sub { display: none; }
 }
+
+/* ======================= 07b. HERO — SCROLL OPENING ===================== */
+/* The section is tall; its first screen sticks while the film opens from a
+   cropped window to full bleed, then the photographs below travel past.
+   Every moving value is set by initHeroScroll in main.js, so with reduced
+   motion (or no JS) this reads as the plain film hero it was. */
+.hero--scroll {
+  display: block; min-height: 0; overflow: visible;
+  background: var(--ink);
+}
+.hero--scroll .hero__pin {
+  position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.hero--scroll .hero__media { will-change: clip-path, transform, opacity; }
+.hero--scroll .hero__inner { will-change: opacity, transform; }
+
+.hero__parallax {
+  position: relative; z-index: 2;
+  max-width: 1080px; margin-inline: auto;
+  padding: clamp(4rem, 14vh, 12rem) var(--gutter) clamp(3rem, 8vh, 7rem);
+  display: grid; gap: clamp(2rem, 6vh, 5rem);
+}
+.hero__px { display: block; will-change: transform, opacity; }
+.hero__px--a { width: 38%; }
+.hero__px--b { width: 64%; margin-inline: auto; }
+.hero__px--c { width: 36%; margin-left: auto; }
+.hero__px--d { width: 46%; margin-left: 14%; }
+
+/* Hands the ink ground over to the page. */
+.hero__handover {
+  position: relative; z-index: 3; height: clamp(120px, 24vh, 280px);
+  background: linear-gradient(to bottom, rgba(18,16,13,0), var(--ivory));
+}
+
+@media (max-width: 720px) {
+  .hero__parallax { gap: 2rem; padding-top: 3rem; }
+  .hero__px--a, .hero__px--c { width: 56%; }
+  .hero__px--b { width: 82%; }
+  .hero__px--d { width: 64%; margin-left: 8%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero--scroll .hero__pin { position: static; height: 100svh; }
+  .hero__parallax { display: none; }
+  .hero__handover { display: none; }
+}

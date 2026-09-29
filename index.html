@@ -159,10 +159,13 @@
 <main id="main">
 
 <!-- ======================================================== HERO ======= -->
-<section class="hero" id="home">
-  <!-- The hero is the film alone (MEDIA.heroVideo). main.js sets the source
-       as soon as the page boots; it fades up from the dark ground on its
-       first frame and loops muted behind the headline. -->
+<section class="hero hero--scroll" id="home">
+  <!-- The first screen is pinned: the film (MEDIA.heroVideo) opens from a
+       cropped window to full bleed as the reader scrolls, then fades and
+       hands over to the parallax photographs below. initHeroScroll in
+       main.js drives it; with reduced motion nothing moves and the film
+       simply fills the frame. -->
+  <div class="hero__pin">
   <div class="hero__media" id="heroMedia">
     <video class="hero__video" id="heroVideo" muted loop playsinline autoplay
            preload="auto" aria-hidden="true"></video>
@@ -202,6 +205,20 @@
     <div><b>UAE</b><span>Wide Installation</span></div>
     <div><b>100%</b><span>Made to Measure</span></div>
   </div>
+  </div><!-- /.hero__pin -->
+
+  <!-- Photographs travelling against the scroll as the film clears. -->
+  <div class="hero__parallax" aria-hidden="true">
+    <img class="hero__px hero__px--a" data-start="-200" data-end="200"
+         src="assets/img/showcase-walnut-display-900.jpg" alt="" loading="lazy" decoding="async">
+    <img class="hero__px hero__px--b" data-start="200" data-end="-250"
+         src="assets/img/showcase-travertine-900.jpg" alt="" loading="lazy" decoding="async">
+    <img class="hero__px hero__px--c" data-start="-200" data-end="200"
+         src="assets/img/showcase-black-fluted-900.jpg" alt="" loading="lazy" decoding="async">
+    <img class="hero__px hero__px--d" data-start="0" data-end="-500"
+         src="assets/img/showcase-beige-arched-900.jpg" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="hero__handover" aria-hidden="true"></div>
 </section>
 
 <!-- ===================================================== MARQUEE ======= -->
