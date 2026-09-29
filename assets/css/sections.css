@@ -5,6 +5,94 @@
    ========================================================================== */
 
 /* ===================== MARQUEE (capability strip) ======================== */
+/* ====================== SHOWCASE (the photo corridor) =================== */
+/* A drifting corridor of photographs: cards are dealt into two lanes and
+   travel from far behind the page toward the reader.
+
+   Distances are in cqw - percentages of this section's own width - so the
+   whole construction scales with the container rather than the viewport,
+   and the geometry holds identically on a phone and a 27in monitor. */
+.showcase {
+  position: relative; overflow: hidden;
+  container-type: inline-size;
+  background: var(--white); color: var(--ink);
+  isolation: isolate;
+  /* Every child is absolutely positioned, so the band has no content to
+     stand it up. Tall enough for a card to arrive, pass and leave. */
+  height: clamp(480px, 66vh, 820px);
+}
+.showcase__stage {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  perspective: 30cqw; perspective-origin: 50% 52%;
+}
+.showcase__inner { position: absolute; inset: 0; transform-style: preserve-3d; }
+
+.showcase__card {
+  position: absolute; left: 50%; top: 52%;
+  /* Half the width and height are negated in the margins so the card stays
+     centred on its own path; change one and the other three must follow. */
+  width: 38cqw; height: 52cqw; margin-left: -19cqw; margin-top: -26cqw;
+  overflow: hidden; backface-visibility: hidden;
+  border: 1px solid rgba(23, 23, 23, .08);
+  animation-duration: var(--showcase-dur, 22s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.showcase__card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Right-hand lane. Sweeps out to the right as it approaches.
+
+   The starting depth matters more than the card size for how large these
+   read. Perspective scale is 30 / (30 - z), so a card starting at -258cqw
+   is drawn at roughly a ninth of its size and stays small for most of the
+   trip. Starting at -132cqw it enters at about a fifth instead, and every
+   photograph spends far longer at a legible size. */
+@keyframes showcaseR {
+  from { transform: translate3d(-11cqw, 0, -132cqw) rotateY(-6deg); }
+  to   { transform: translate3d(44cqw, 0, 14cqw) rotateY(-28deg); }
+}
+/* Left-hand lane: the same path mirrored. */
+@keyframes showcaseL {
+  from { transform: translate3d(11cqw, 0, -132cqw) rotateY(6deg); }
+  to   { transform: translate3d(-44cqw, 0, 14cqw) rotateY(28deg); }
+}
+
+/* With no copy set over the band, the scrim's only job is to feather the
+   top and bottom edges into the ink so cards enter and leave the frame
+   rather than being cut off by a hard border. The centre stays clear. */
+.showcase__scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to bottom,
+    var(--white) 0%, rgba(255,255,255,.06) 15%,
+    rgba(255,255,255,.06) 85%, var(--white) 100%);
+}
+
+/* Because the geometry is expressed in cqw, a 375px container shrinks the
+   whole corridor to match: cards spent most of their life under 40px wide,
+   reading as specks rather than photographs. Phones get a wider card and a
+   shorter corridor, so each picture arrives large enough to recognise. */
+@media (max-width: 720px) {
+  .showcase__card {
+    width: 76cqw; height: 102cqw; margin-left: -38cqw; margin-top: -51cqw;
+  }
+
+  @keyframes showcaseR {
+    from { transform: translate3d(-8cqw, 0, -74cqw) rotateY(-5deg); }
+    to   { transform: translate3d(52cqw, 0, 12cqw) rotateY(-26deg); }
+  }
+  @keyframes showcaseL {
+    from { transform: translate3d(8cqw, 0, -74cqw) rotateY(5deg); }
+    to   { transform: translate3d(-52cqw, 0, 12cqw) rotateY(26deg); }
+  }
+}
+
+/* A corridor of moving photographs is exactly what reduced motion is for.
+   The cards stop where they are and the section reads as a still collage. */
+@media (prefers-reduced-motion: reduce) {
+  .showcase__card { animation: none !important; }
+  .showcase__stage { display: none; }
+}
+
 .marquee {
   border-block: 1px solid var(--line);
   overflow: hidden; padding-block: 1.25rem; background: var(--white);
@@ -421,7 +509,7 @@
 .modal__close {
   position: absolute; top: 0; right: 0; z-index: 6;
   width: 54px; height: 54px; display: grid; place-items: center;
-  background: var(--ink); color: var(--ivory);
+  background: var(--white); color: var(--ink);
   transition: background-color .4s var(--ease), transform .5s var(--ease);
 }
 .modal__close:hover { background: var(--champagne); color: var(--ink); transform: rotate(90deg); }

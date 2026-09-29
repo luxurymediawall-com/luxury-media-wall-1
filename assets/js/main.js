@@ -1247,6 +1247,38 @@
     });
   }
 
+
+  /* ======================================================== 20. SHOWCASE */
+  /* Deals every photograph into the drifting corridor behind the studio
+     statement. Each card runs the same animation; spacing them evenly by
+     animation-delay across one cycle is what turns twelve independent
+     loops into a single continuous stream.
+
+     A NEGATIVE delay is the important part: it starts each card partway
+     through its path rather than making the reader wait for the queue to
+     fill, so the corridor is already populated on the first frame. */
+  function renderShowcase() {
+    const inner = $('#showcaseInner');
+    if (!inner || typeof SHOWCASE === 'undefined' || !SHOWCASE.length) return;
+
+    /* Reduced motion: the CSS hides the stage, so building twelve image
+       elements that will never be seen is wasted bandwidth. */
+    if (REDUCED) return;
+
+    const dur = (typeof SHOWCASE_SECONDS === 'number' ? SHOWCASE_SECONDS : 22);
+    const step = dur / SHOWCASE.length;
+    inner.style.setProperty('--showcase-dur', dur + 's');
+
+    inner.innerHTML = SHOWCASE.map((s, i) => `
+      <div class="showcase__card"
+           style="animation-name:${i % 2 ? 'showcaseL' : 'showcaseR'};
+                  animation-delay:-${(i * step).toFixed(2)}s">
+        <img src="${asset(s.img + '-480.jpg')}"
+             srcset="${srcsetCard(s.img)}" sizes="20vw"
+             loading="lazy" decoding="async" alt="${esc(s.alt || '')}">
+      </div>
+    `).join('');
+  }
   /* ================================================ 18b. MATERIALS MORPH */
   /* The materials gallery. Each sample dissolves into the next through an
      fbm noise field in one WebGL pass: every pixel gets a threshold from the
@@ -1763,6 +1795,7 @@ void main() {
     renderTransforms();
     initServicesFlow();
     initJourney();
+    renderShowcase();
     initMaterialsMorph();
     renderWallGuide();
     renderQuotes();
