@@ -719,49 +719,54 @@ h1, h2, h3, h4 {
   .brand__sub { display: none; }
 }
 
-/* ======================= 07b. HERO — SCROLL OPENING ===================== */
-/* The section is tall; its first screen sticks while the film opens from a
-   cropped window to full bleed, then the photographs below travel past.
-   Every moving value is set by initHeroScroll in main.js, so with reduced
-   motion (or no JS) this reads as the plain film hero it was. */
-.hero--scroll {
-  display: block; min-height: 0; overflow: visible;
-  background: var(--ink);
+/* ========================== 07b. REVEAL BAND ============================ */
+/* The screen after the hero. The section is tall; its first screen sticks
+   while the photograph opens from a cropped window to full bleed, then the
+   photographs below travel past. Every moving value is set by
+   initScrollReveal in main.js, so with reduced motion (or no JS) this reads
+   as one still photograph with a line of type over it. */
+.reveal { position: relative; display: block; background: var(--ink); }
+.reveal__pin {
+  position: sticky; top: 0; height: 100svh; overflow: hidden;
+  display: grid; place-items: center; isolation: isolate;
 }
-.hero--scroll .hero__pin {
-  position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate;
-  display: flex; flex-direction: column; justify-content: flex-end;
+.reveal__media {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  will-change: clip-path, transform, opacity;
 }
-.hero--scroll .hero__media { will-change: clip-path, transform, opacity; }
-.hero--scroll .hero__inner { will-change: opacity, transform; }
+.reveal__inner {
+  position: relative; z-index: 2; text-align: center; color: var(--ivory);
+  padding-inline: var(--gutter); will-change: opacity, transform;
+  text-shadow: 0 2px 30px rgba(9, 9, 9, .55);
+}
+.reveal__inner h2 { color: var(--white); max-width: 16ch; margin-inline: auto; }
 
-.hero__parallax {
-  position: relative; z-index: 2;
+.reveal__parallax {
+  position: relative; z-index: 3;
   max-width: 1080px; margin-inline: auto;
   padding: clamp(4rem, 14vh, 12rem) var(--gutter) clamp(3rem, 8vh, 7rem);
   display: grid; gap: clamp(2rem, 6vh, 5rem);
 }
-.hero__px { display: block; will-change: transform, opacity; }
-.hero__px--a { width: 38%; }
-.hero__px--b { width: 64%; margin-inline: auto; }
-.hero__px--c { width: 36%; margin-left: auto; }
-.hero__px--d { width: 46%; margin-left: 14%; }
+.reveal__px { display: block; will-change: transform, opacity; }
+.reveal__px--a { width: 38%; }
+.reveal__px--b { width: 64%; margin-inline: auto; }
+.reveal__px--c { width: 36%; margin-left: auto; }
+.reveal__px--d { width: 46%; margin-left: 14%; }
 
-/* Hands the ink ground over to the page. */
-.hero__handover {
+/* Hands the ink ground back to the page. */
+.reveal__handover {
   position: relative; z-index: 3; height: clamp(120px, 24vh, 280px);
-  background: linear-gradient(to bottom, rgba(18,16,13,0), var(--ivory));
+  background: linear-gradient(to bottom, rgba(18, 16, 13, 0), var(--ivory));
 }
 
 @media (max-width: 720px) {
-  .hero__parallax { gap: 2rem; padding-top: 3rem; }
-  .hero__px--a, .hero__px--c { width: 56%; }
-  .hero__px--b { width: 82%; }
-  .hero__px--d { width: 64%; margin-left: 8%; }
+  .reveal__parallax { gap: 2rem; padding-top: 3rem; }
+  .reveal__px--a, .reveal__px--c { width: 56%; }
+  .reveal__px--b { width: 82%; }
+  .reveal__px--d { width: 64%; margin-left: 8%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero--scroll .hero__pin { position: static; height: 100svh; }
-  .hero__parallax { display: none; }
-  .hero__handover { display: none; }
+  .reveal__pin { position: static; }
+  .reveal__parallax, .reveal__handover { display: none; }
 }

@@ -181,7 +181,7 @@
      it stops on its opening frame rather than playing. It pauses whenever
      the hero is scrolled out of view.                                     */
   function initHeroVideo() {
-    const media = $('#heroMedia');
+    const media = $('#revealMedia');
     const video = $('#heroVideo');
     const src = (typeof MEDIA !== 'undefined') && MEDIA.heroVideo;
     if (!media || !video || !src) return;
@@ -218,9 +218,9 @@
     }
   }
 
-  /* The scroll opening. CSS pins the first screen; here the film is clipped
-     open, scaled down and faded across the section's scroll, the headline
-     clears early so type never sits over a half-open window, and the
+  /* The reveal band. CSS pins its first screen; here the photograph is clipped
+     open, scaled down and faded across the section's scroll, its line of type
+     clears early so it never sits over a half-open window, and the
      photographs below travel against the scroll.
 
      Ported from a React component built on Framer Motion and Lenis. Framer
@@ -228,15 +228,13 @@
      arithmetic below - and Lenis only smoothed the wheel, which is the
      browser's own job, so neither library is carried. Reduced motion leaves
      every value alone and the hero reads as the plain film it was. */
-  function initHeroScroll() {
-    const hero = $('#home');
-    if (!hero || !hero.classList.contains('hero--scroll') || REDUCED) return;
+  function initScrollReveal() {
+    const hero = $('#reveal');
+    if (!hero || REDUCED) return;
 
-    const media = $('#heroMedia');
-    const inner = $('.hero__inner', hero);
-    const strip = $('.hero__strip', hero);
-    const cue = $('.scroll-cue', hero);
-    const shots = $$('.hero__px', hero);
+    const media = $('#revealMedia');
+    const inner = $('.reveal__inner', hero);
+    const shots = $$('.reveal__px', hero);
     if (!media) return;
 
     const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
@@ -264,8 +262,6 @@
         inner.style.opacity = fade;
         inner.style.transform = `translateY(${(-40 * out).toFixed(1)}px)`;
       }
-      if (strip) strip.style.opacity = fade;
-      if (cue) cue.style.opacity = fade;
 
       const vh = window.innerHeight;
       shots.forEach((img) => {
@@ -1887,7 +1883,7 @@ void main() {
 
     initHeader();
     initHeroVideo();
-    initHeroScroll();
+    initScrollReveal();
     initModal();
     initShare();
     initConfigurator();
