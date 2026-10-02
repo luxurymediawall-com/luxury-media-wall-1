@@ -89,6 +89,14 @@
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
+<!-- The page's ground: the Silk Blend gradient sways on the canvas, the
+     grain sits over it, and the veil keeps the ivory contrast the type was
+     set for. All three are fixed behind everything (see silk-gradient.js);
+     sections that paint their own background simply cover them. -->
+<canvas class="silk" id="silk" aria-hidden="true"></canvas>
+<div class="silk-grain" aria-hidden="true"></div>
+<div class="silk-veil" aria-hidden="true"></div>
+
 <!-- ====================================================== HEADER ======= -->
 <header class="header" id="header">
   <div class="shell header__inner">
@@ -828,6 +836,7 @@
       </aside>
 
       <form class="form" id="enquiryForm" novalidate data-reveal>
+        <span class="form__beams" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
         <div class="field">
           <label for="fName">Name <span class="req">*</span></label>
           <input id="fName" name="name" type="text" autocomplete="name" placeholder="Your full name" required>
@@ -1030,5 +1039,6 @@
 <script src="assets/js/signature.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/glass-carousel.js" defer></script>
+<script src="assets/js/silk-gradient.js" defer></script>
 </body>
 </html>

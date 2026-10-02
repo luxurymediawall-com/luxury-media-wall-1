@@ -1024,6 +1024,34 @@
       if (status) status.textContent = 'Thank you — your review is on its way to the studio.';
     });
   }
+  /* The enquiry pane leans a little toward the pointer. Mouse only: on a
+     touch screen there is no hover to lean into, and the tilt would fight
+     with scrolling. */
+  function initFormTilt() {
+    const card = $('#enquiryForm');
+    if (!card || REDUCED || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    const LIMIT = 6;                  /* degrees, either way */
+    let raf = 0, rx = 0, ry = 0;
+
+    const apply = () => {
+      raf = 0;
+      card.style.transform = `perspective(1200px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+    };
+    const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
+
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      const dx = (e.clientX - r.left) / r.width - .5;
+      const dy = (e.clientY - r.top) / r.height - .5;
+      rx = -dy * LIMIT * 2;
+      ry = dx * LIMIT * 2;
+      queue();
+    });
+    card.addEventListener('pointerleave', () => { rx = 0; ry = 0; queue(); });
+    /* A tilted pane while typing is nauseating, and it moves the caret. */
+    card.addEventListener('focusin', () => { rx = 0; ry = 0; apply(); });
+  }
   /* ==================================================== 14. ENQUIRY FORM */
   function initForm() {
     const form = $('#enquiryForm');
@@ -1931,6 +1959,7 @@ void main() {
     initFilm();
     initForm();
     initReviewForm();
+    initFormTilt();
     initCoverflow();
     initMarquee();
     initFloat();

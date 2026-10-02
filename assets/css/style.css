@@ -770,3 +770,26 @@ h1, h2, h3, h4 {
   .reveal__pin { position: static; }
   .reveal__parallax, .reveal__handover { display: none; }
 }
+
+/* ========================= 26. SILK BLEND GROUND ======================== */
+/* The page's ground, in three fixed layers: the swaying gradient on the
+   canvas, the film grain over it, and a veil that holds the ivory the type
+   was set against. Sections that paint their own background (bg-white,
+   on-dark, the hero, the bands) cover all three, so the gradient reads
+   through the plain sections only - which is where the page used to be
+   flat ivory. */
+.silk, .silk-grain, .silk-veil {
+  position: fixed; inset: 0; pointer-events: none;
+}
+.silk { z-index: -3; display: block; }
+.silk-grain {
+  z-index: -2; opacity: .42; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.21'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+/* Without this the deep iris end of the gradient sits under charcoal body
+   copy at about 2:1 - unreadable. The veil keeps every plain section close
+   to its old ivory while the colour still moves underneath. */
+.silk-veil { z-index: -1; background: rgba(245, 242, 236, .82); }
+
+body { background: transparent; }

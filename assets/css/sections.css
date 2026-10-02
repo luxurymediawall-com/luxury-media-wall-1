@@ -1479,3 +1479,79 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   .review { grid-template-columns: 1fr; }
   .review__form { grid-template-columns: 1fr; }
 }
+
+/* ======================== ENQUIRY FORM — GLASS CARD ===================== */
+/* The form reads as one dark pane of glass laid on the white section: a
+   blurred ink ground, a hairline edge, light travelling around that edge,
+   and a slight tilt toward the pointer (initFormTilt in main.js). Every
+   field is restyled for the dark ground - the same inputs, legible. */
+.form {
+  position: relative; isolation: isolate;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background: rgba(18, 16, 13, .74);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08);
+          backdrop-filter: blur(18px) saturate(1.08);
+  border: 1px solid rgba(255, 255, 255, .08);
+  box-shadow: 0 40px 90px -50px rgba(9, 9, 9, .75);
+  transform-style: preserve-3d;
+  transition: transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+/* The faint crosshatch that keeps the pane from reading as flat black. */
+.form::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .04;
+  background-image:
+    linear-gradient(135deg, #fff .5px, transparent .5px),
+    linear-gradient(45deg, #fff .5px, transparent .5px);
+  background-size: 30px 30px;
+}
+
+/* Light running the four edges, each starting a beat after the last. */
+.form__beams { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.form__beams i { position: absolute; opacity: .75; }
+.form__beams i:nth-child(1), .form__beams i:nth-child(3) { height: 2px; width: 46%; }
+.form__beams i:nth-child(2), .form__beams i:nth-child(4) { width: 2px; height: 46%; }
+.form__beams i:nth-child(1) {
+  top: 0; left: 0; animation: beamRight 2.6s var(--ease-soft) infinite;
+  background: linear-gradient(to right, transparent, var(--champagne), transparent);
+}
+.form__beams i:nth-child(2) {
+  top: 0; right: 0; animation: beamDown 2.6s var(--ease-soft) .65s infinite;
+  background: linear-gradient(to bottom, transparent, var(--champagne), transparent);
+}
+.form__beams i:nth-child(3) {
+  bottom: 0; right: 0; animation: beamLeft 2.6s var(--ease-soft) 1.3s infinite;
+  background: linear-gradient(to right, transparent, var(--champagne), transparent);
+}
+.form__beams i:nth-child(4) {
+  bottom: 0; left: 0; animation: beamUp 2.6s var(--ease-soft) 1.95s infinite;
+  background: linear-gradient(to bottom, transparent, var(--champagne), transparent);
+}
+@keyframes beamRight { from { transform: translateX(-120%); } to { transform: translateX(340%); } }
+@keyframes beamLeft  { from { transform: translateX(120%); }  to { transform: translateX(-340%); } }
+@keyframes beamDown  { from { transform: translateY(-120%); } to { transform: translateY(340%); } }
+@keyframes beamUp    { from { transform: translateY(120%); }  to { transform: translateY(-340%); } }
+
+/* The fields, on the dark ground. */
+.form .field label { color: rgba(245, 242, 236, .74); }
+.form .field label .req { color: var(--champagne); }
+.form .field input, .form .field select, .form .field textarea {
+  background: rgba(255, 255, 255, .06);
+  border-color: rgba(255, 255, 255, .12);
+  color: var(--ivory);
+}
+.form .field input::placeholder, .form .field textarea::placeholder { color: rgba(245, 242, 236, .38); }
+.form .field input:focus, .form .field select:focus, .form .field textarea:focus {
+  background: rgba(255, 255, 255, .1); border-color: var(--champagne);
+}
+/* Native dropdowns paint their list on the system ground, so the options
+   keep dark text whatever the field looks like. */
+.form .field select option { color: #1A1714; background: var(--white); }
+.form .field.has-error input, .form .field.has-error select, .form .field.has-error textarea { border-color: #e0714f; }
+.form .field__error { color: #e0714f; }
+.form__note { color: rgba(245, 242, 236, .62); }
+.form__status { color: var(--champagne); }
+
+@media (prefers-reduced-motion: reduce) {
+  .form__beams { display: none; }
+  .form { transform: none !important; }
+}
