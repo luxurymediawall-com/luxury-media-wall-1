@@ -1555,3 +1555,49 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   .form__beams { display: none; }
   .form { transform: none !important; }
 }
+
+/* ============================== GLASS PANES ============================= */
+/* The enquiry pane's look, inverted for the light sections: frosted white
+   rather than ink, so the Silk ground reads through each card while the
+   charcoal copy keeps its contrast. Light runs the edges on hover or focus
+   only - twenty panes pulsing at once would be a fairground, and would keep
+   a phone's compositor busy for nothing. */
+.ba-card, .guide__item, .quote {
+  position: relative; isolation: isolate; overflow: hidden;
+  background: rgba(255, 255, 255, .66);
+  -webkit-backdrop-filter: blur(16px) saturate(1.06);
+          backdrop-filter: blur(16px) saturate(1.06);
+}
+/* The guide keeps its hairline grid; the free-standing cards get a light
+   edge instead of the grey one. */
+.ba-card, .quote { border-color: rgba(255, 255, 255, .55); }
+
+.ba-card::before, .guide__item::before, .quote::before,
+.ba-card::after,  .guide__item::after,  .quote::after {
+  content: ""; position: absolute; z-index: 3; height: 2px; width: 45%;
+  background: linear-gradient(to right, transparent, var(--champagne), transparent);
+  opacity: 0; pointer-events: none;
+}
+.ba-card::before, .guide__item::before, .quote::before { top: 0; left: 0; }
+.ba-card::after,  .guide__item::after,  .quote::after  { bottom: 0; right: 0; }
+
+.ba-card:hover::before, .guide__item:hover::before, .quote:hover::before,
+.ba-card:focus-within::before, .guide__item:focus-within::before, .quote:focus-within::before {
+  opacity: .85; animation: beamRight 2.4s var(--ease-soft) infinite;
+}
+.ba-card:hover::after, .guide__item:hover::after, .quote:hover::after,
+.ba-card:focus-within::after, .guide__item:focus-within::after, .quote:focus-within::after {
+  opacity: .85; animation: beamLeft 2.4s var(--ease-soft) .5s infinite;
+}
+
+@media (max-width: 720px) {
+  /* Blur across a column of cards costs more than it shows on a phone. */
+  .ba-card, .guide__item, .quote {
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    background: rgba(255, 255, 255, .88);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ba-card::before, .guide__item::before, .quote::before,
+  .ba-card::after,  .guide__item::after,  .quote::after { display: none; }
+}
