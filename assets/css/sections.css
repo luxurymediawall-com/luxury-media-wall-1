@@ -1601,3 +1601,44 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   .ba-card::before, .guide__item::before, .quote::before,
   .ba-card::after,  .guide__item::after,  .quote::after { display: none; }
 }
+
+/* ===================== FORM FIELDS — THE SAME LIGHT ===================== */
+/* The light that runs the pane's edge also runs a field when it takes
+   focus, and sweeps the quote button under the pointer. */
+.form .field { position: relative; }
+.form .field::after {
+  content: ""; position: absolute; left: 0; bottom: 0; z-index: 2;
+  height: 2px; width: 40%; opacity: 0; pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--champagne), transparent);
+}
+.form .field:focus-within::after { opacity: .9; animation: beamRight 2.2s var(--ease-soft) infinite; }
+.form .field input, .form .field select, .form .field textarea {
+  transition: background-color .4s var(--ease), border-color .4s var(--ease), transform .4s var(--ease);
+}
+.form .field:hover input, .form .field:hover select, .form .field:hover textarea { transform: translateY(-1px); }
+
+/* The sheen crossing the button, in the same champagne as the beams. */
+.form .btn::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(110deg, transparent 18%, rgba(198, 166, 107, .38) 50%, transparent 82%);
+  transform: translateX(-120%);
+}
+.form .btn:hover::after, .form .btn:focus-visible::after { animation: sheen 1.5s var(--ease-soft) infinite; }
+@keyframes sheen { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+
+/* ==================== THE GROUND THROUGH THE SECTIONS =================== */
+/* The white sections let the Silk ground through as well, so the colour
+   runs the length of the page rather than stopping at each white band.
+   Alpha only, no blur: blurring a full-height section costs far more than
+   it shows, and these grounds sit behind text rather than photographs. */
+.bg-white, .showcase, .journey { background: rgba(255, 255, 255, .62); }
+.contact__card {
+  background: rgba(255, 255, 255, .66);
+  -webkit-backdrop-filter: blur(14px) saturate(1.05);
+          backdrop-filter: blur(14px) saturate(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form .field::after, .form .btn::after { display: none; }
+  .form .field:hover input, .form .field:hover select, .form .field:hover textarea { transform: none; }
+}
