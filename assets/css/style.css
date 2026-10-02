@@ -793,3 +793,14 @@ h1, h2, h3, h4 {
 .silk-veil { z-index: -1; background: rgba(245, 242, 236, .82); }
 
 body { background: transparent; }
+
+/* The gradient again inside the footer: screened over the ink so it tints
+   the ground rather than replacing it, which keeps the ivory type legible.
+   The footer's own content sits above it. */
+.footer { isolation: isolate; overflow: hidden; }
+.silk--footer {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; display: block; pointer-events: none;
+  opacity: .22; mix-blend-mode: screen;
+}
+.footer__top, .footer__bottom { position: relative; z-index: 1; }
