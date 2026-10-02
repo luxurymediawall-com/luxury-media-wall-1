@@ -804,3 +804,13 @@ body { background: transparent; }
   opacity: .22; mix-blend-mode: screen;
 }
 .footer__top, .footer__bottom { position: relative; z-index: 1; }
+
+/* The same gradient over a dark band: screened at 22%, with the band's own
+   content lifted above it. */
+.silk--band {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; display: block; pointer-events: none;
+  opacity: .22; mix-blend-mode: screen;
+}
+.section.on-dark { isolation: isolate; overflow: hidden; }
+.section.on-dark > *:not(.silk--band) { position: relative; z-index: 1; }
