@@ -709,6 +709,8 @@
         <figcaption class="entry__body">
           <h3>${esc(e.title)}</h3>
           <p>${esc(e.text)}</p>
+          <p class="entry__spec">${esc(e.spec)}</p>
+          <p class="entry__best"><b>Suits</b> ${esc(e.best)}</p>
         </figcaption>
       </figure>
     `).join('');

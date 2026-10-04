@@ -1689,3 +1689,14 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   .entry:hover { transform: none; }
   .entry:hover .entry__media img { transform: none; }
 }
+/* The materials line and the one-line brief under each entrance. */
+.entry__spec {
+  margin-top: .8rem !important; padding-top: .8rem;
+  border-top: 1px solid var(--line-soft);
+  font-size: .74rem !important; letter-spacing: .04em; color: var(--champagne-dim) !important;
+}
+.entry__best { margin-top: .5rem !important; font-size: .78rem !important; }
+.entry__best b {
+  font-weight: 600; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ink); margin-right: .4rem;
+}

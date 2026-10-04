@@ -589,48 +589,62 @@ const SERVICES = [
 /* Entrance and hallway joinery: the same trade as a media wall - panelling,
    concealed lighting, a floating unit - at the front door. Each entry is a
    design direction rather than a named project, so the copy describes what
-   is built, not where. */
+   is built and what it suits, never where it was installed. */
 const ENTRANCES = [
   {
     img: 'assets/img/entry-blossom-mirror',
     title: 'Backlit Curved Mirror',
-    text: 'A soft-edged mirror on a halo of warm LED, with planting set against plaster.',
+    text: 'A full-height mirror cut in a soft wave and lit from behind, so the glow lands on the plaster rather than on the glass. A blossom branch breaks across the top corner, and a woven bench and round rug keep the floor light underneath.',
+    spec: 'Shaped mirror · concealed warm LED · lime plaster · woven bench',
+    best: 'A wide entrance where the mirror is the only furniture',
     alt: 'Curved full-height mirror with an LED halo and blossom branches in a hallway'
   },
   {
     img: 'assets/img/entry-lit-mirror-wardrobe',
     title: 'Mirror and Wardrobe Run',
-    text: 'A lit mirror panel beside floor-to-ceiling wardrobe doors in a matching finish.',
+    text: 'A lit mirror panel runs floor to ceiling beside full-height wardrobe doors in the same warm beige, so storage and mirror read as one wall instead of two objects. A slim drawer and a soft stool give somewhere to drop keys and change shoes.',
+    spec: 'Matt beige lacquer · LED-framed mirror · brushed brass handles',
+    best: 'A narrow corridor entrance that still needs coat storage',
     alt: 'Hallway with a backlit mirror panel beside a full-height beige wardrobe run'
   },
   {
     img: 'assets/img/entry-fluted-oak-console',
     title: 'Fluted Oak Entrance',
-    text: 'Oak flutes run wall to wall, with a floating console and a mirrored return.',
+    text: 'Oak flutes run wall to wall and carry on around the return, with a black-framed mirror set flush into them. The floating console crosses the mirror line so it appears to continue inside the reflection, and the upholstered bench leaves shoe space beneath.',
+    spec: 'Natural oak flutes · black steel frame · floating oak console',
+    best: 'A square hall where one material should do all the work',
     alt: 'Fluted oak hallway panelling with a floating console and tall mirror'
   },
   {
     img: 'assets/img/entry-arch-mirror-bench',
     title: 'Arched Mirror with Bench',
-    text: 'A round lit mirror between a seat with shoe storage and a slatted divider.',
+    text: 'A round mirror, backlit in warm white, sits between a cushioned bench with drawers below and a slatted oak divider that screens the dining room beyond. Lit niches beside the seat hold the things that otherwise end up on the floor.',
+    spec: 'Backlit round mirror · oak slats · bench with drawers · lit niches',
+    best: 'An open-plan entrance that needs separating from the living space',
     alt: 'Round backlit mirror with a cushioned bench, storage and a slatted oak divider'
   },
   {
     img: 'assets/img/entry-fluted-arch-gold',
     title: 'Fluted Arch in Brass',
-    text: 'A half-round mirror cut into fluted panelling, with a dark floating drawer.',
+    text: 'A half-round mirror cut into fluted panelling and edged in light, with a dark floating drawer running straight across it. Slim pendants hang in front of the glass, so the reflection doubles them and the arch reads as a full circle.',
+    spec: 'Fluted panelling · brass reveals · backlit half-round mirror · floating drawer',
+    best: 'A tall entrance hall where the arrival should feel formal',
     alt: 'Half-round backlit mirror set into fluted panelling with a floating drawer unit'
   },
   {
     img: 'assets/img/entry-marble-arch-divider',
     title: 'Marble Arch Divider',
-    text: 'An arched opening framed in marble, splitting the entrance from the dining room.',
+    text: 'An arch cut through to the dining room, framed in book-matched marble and lit around its inner edge. The entrance side stays quiet: fluted panelling, a floating console with a single brass pull, and two globe pendants.',
+    spec: 'Backlit marble arch · fluted panels · floating console · brass pull',
+    best: 'A flat where the front door opens straight into the dining area',
     alt: 'Arched marble-framed opening between an entrance hall and a dining room'
   },
   {
     img: 'assets/img/entry-lit-mirror-console',
     title: 'Lit Mirror and Console',
-    text: 'A full-height mirror edged in light above a slim console, for a narrow hall.',
+    text: 'A full-height mirror edged in warm light, set into the end wall of a narrow hall with a slim console beneath it. Two round stools tuck underneath, so the floor stays clear and the corridor still reads as wide.',
+    spec: 'LED-edged mirror · floating console · concealed wardrobe run',
+    best: 'A short, narrow hall that needs to look longer',
     alt: 'Full-height mirror edged with warm light above a slim wooden console'
   }
 ];
