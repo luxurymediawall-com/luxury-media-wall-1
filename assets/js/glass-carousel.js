@@ -212,24 +212,37 @@ void main() {
   /* ---------------------------------------------------------- the photos */
   const sources = items.map(() => ({ tex: null, aspect: 3 / 4 }));
   let loaded = 0;
-  items.forEach((it, i) => {
-    const img = new Image();
-    img.decoding = 'async';
-    img.onload = () => {
-      const tex = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      sources[i].tex = tex;
-      sources[i].aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
-      measure();
-      if (++loaded === 1) { root.classList.add('is-live'); scroll = target = centerFor(0); }
-    };
-    img.src = it.src;
+  /* Nineteen photographs is megabytes of texture. They are fetched only
+     once the gallery is near the screen; until then the strip below the
+     canvas is what a visitor sees, and it lazy-loads its own images. */
+  function loadTextures() {
+    items.forEach((it, i) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => {
+        const tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        sources[i].tex = tex;
+        sources[i].aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
+        measure();
+        if (++loaded === 1) { root.classList.add('is-live'); scroll = target = centerFor(0); }
+      };
+      img.src = it.src;
   });
+  }
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) { io.disconnect(); loadTextures(); }
+    }, { rootMargin: '700px 0px' });
+    io.observe(root);
+  } else {
+    loadTextures();
+  }
 
   /* ------------------------------------------------------------- layout */
   const GAP = 12;

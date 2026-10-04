@@ -172,8 +172,8 @@
        as soon as the page boots; it fades up from the dark ground on its
        first frame and loops muted behind the headline. -->
   <div class="hero__media" id="heroMedia">
-    <video class="hero__video" id="heroVideo" muted loop playsinline autoplay
-           preload="auto" aria-hidden="true"></video>
+    <video class="hero__video" id="heroVideo" muted loop playsinline
+           preload="none" aria-hidden="true"></video>
   </div>
   <div class="hero__scrim"></div>
 
@@ -454,6 +454,29 @@
 
       <div class="cflow__caption" id="servicesCaption" aria-live="polite"></div>
       <div class="cflow__dots" id="servicesDots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== ENTRANCES ====== -->
+<!-- Entrance and hallway joinery, rendered from ENTRANCES in site-config.js. -->
+<section class="section" id="entrances">
+  <div class="shell">
+    <div class="section-head section-head--split">
+      <div>
+        <p class="eyebrow" data-reveal>At The Front Door</p>
+        <h2 class="h1 mt-6 reveal-words" data-reveal="fade">Entrance &amp; hallway joinery</h2>
+      </div>
+      <div class="section-head__aside">
+        <p class="lede" data-reveal>
+          The same trade as a media wall, at the entrance: panelling, concealed
+          lighting, a lit mirror and a floating unit measured to the hall.
+        </p>
+      </div>
+    </div>
+
+    <div class="entry__grid" id="entryGrid">
+      <!-- rendered from ENTRANCES in site-config.js -->
     </div>
   </div>
 </section>
@@ -1038,8 +1061,6 @@
   </div>
 </div>
 
-<!-- Motion 13.1.1 (MIT) - self-hosted, no CDN, no build step -->
-<script src="assets/js/vendor/motion.js" defer></script>
 <script src="assets/js/site-config.js"></script>
 <script src="assets/js/signature.js"></script>
 <script src="assets/js/main.js"></script>

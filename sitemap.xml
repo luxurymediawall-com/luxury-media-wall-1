@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Single-page site: the sections are the destinations.
-     Do not hand-edit these URLs. Set them all at once, along with the
-     canonical tag and Open Graph URL in index.html:
+<!-- One page, one URL. The #section links that used to be listed here were
+     ignored by search engines: a fragment is a position on this page, not a
+     page of its own, so listing them claimed six pages where one exists.
+
+     Set the address with:
        powershell -ExecutionPolicy Bypass -File tools/set-domain.ps1 -Domain "https://your-real-domain"
      Then submit this file in Google Search Console. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -9,30 +11,5 @@
     <loc>https://luxurymediawall.com/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://luxurymediawall.com/#projects</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://luxurymediawall.com/#services</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://luxurymediawall.com/#media-walls</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://luxurymediawall.com/#about</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://luxurymediawall.com/#contact</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
   </url>
 </urlset>

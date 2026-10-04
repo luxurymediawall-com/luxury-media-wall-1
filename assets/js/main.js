@@ -201,13 +201,25 @@
       return;
     }
 
-    video.src = asset(src);
-    const p = video.play();
-    if (p && p.catch) p.catch(() => {
-      /* Autoplay refused (Low Power Mode): show the paused first frame. */
-      if (video.readyState >= 2) reveal();
-      else video.addEventListener('loadeddata', reveal, { once: true });
-    });
+    /* The film is 6 MB. Fetching it while the stylesheet, the script and the
+       type are still arriving pushes the first paint back on a phone, and
+       loading speed is a ranking signal as well as a courtesy. So it starts
+       once the page has loaded and the browser is idle: the headline paints
+       on the dark ground first, then the film fades up over it. */
+    const begin = () => {
+      video.src = asset(src);
+      const p = video.play();
+      if (p && p.catch) p.catch(() => {
+        /* Autoplay refused (Low Power Mode): show the paused first frame. */
+        if (video.readyState >= 2) reveal();
+        else video.addEventListener('loadeddata', reveal, { once: true });
+      });
+    };
+    const soon = () => (window.requestIdleCallback
+      ? requestIdleCallback(begin, { timeout: 1500 })
+      : setTimeout(begin, 200));
+    if (document.readyState === 'complete') soon();
+    else window.addEventListener('load', soon, { once: true });
 
     /* No point decoding 1080p frames nobody can see. */
     if ('IntersectionObserver' in window) {
@@ -681,6 +693,26 @@
     });
   }
 
+  /* =========================================== 9b. RENDER: ENTRANCES */
+  /* Entrance and hallway joinery. Each card is a design direction, not a
+     named project, so the copy says what is built and nothing about where. */
+  function renderEntrances() {
+    const grid = $('#entryGrid');
+    if (!grid || typeof ENTRANCES === 'undefined' || !ENTRANCES.length) return;
+    grid.innerHTML = ENTRANCES.map((e, i) => `
+      <figure class="entry" data-reveal style="--reveal-delay:${(i % 3) * 90}ms">
+        <span class="entry__media">
+          <img src="${asset(e.img + '-900.jpg')}" srcset="${srcsetCard(e.img)}"
+               sizes="(max-width: 720px) 88vw, (max-width: 1100px) 44vw, 30vw"
+               loading="lazy" decoding="async" alt="${esc(e.alt)}">
+        </span>
+        <figcaption class="entry__body">
+          <h3>${esc(e.title)}</h3>
+          <p>${esc(e.text)}</p>
+        </figcaption>
+      </figure>
+    `).join('');
+  }
   /* ============================================== 10. RENDER: WALL GUIDE */
   /* Wall types we have not photographed on site yet are rendered through
      ImageKit's AI edit. The edit is the FIRST step of the chain and every
@@ -1756,35 +1788,48 @@ void main() {
     }
 
     /* Each photograph is uploaded the moment it arrives and the loop starts
-       on the first one, rather than waiting for the slowest. */
-    items.forEach((m, i) => {
-      const img = new Image();
-      img.decoding = 'async';
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const tex = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        /* Photographs are not powers of two, so mipmaps and repeat are both
-           off the table in WebGL1: clamp and linear are the only legal pair. */
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        textures[i] = tex;
-        aspects[i] = img.naturalWidth / Math.max(img.naturalHeight, 1);
-        if (!running) {
-          running = true;
-          resize();
-          root.classList.add('is-live');
-          raf = requestAnimationFrame(frame);
-        }
-      };
-      /* One broken photograph costs one sample, not the effect; only when
-         none of them load is there nothing to shade. */
-      img.onerror = () => { refused += 1; if (refused === total) fallBack(); };
-      img.src = asset(m.img + '-1400.jpg');
-    });
+    /* Eleven samples at full width is three megabytes. They are fetched
+       only once the gallery is near the screen, so a visitor who never
+       reaches it never pays for them. */
+    function loadSamples() {
+      items.forEach((m, i) => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const tex = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, tex);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+          /* Photographs are not powers of two, so mipmaps and repeat are both
+             off the table in WebGL1: clamp and linear are the only legal pair. */
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          textures[i] = tex;
+          aspects[i] = img.naturalWidth / Math.max(img.naturalHeight, 1);
+          if (!running) {
+            running = true;
+            resize();
+            root.classList.add('is-live');
+            raf = requestAnimationFrame(frame);
+          }
+        };
+        /* One broken photograph costs one sample, not the effect; only when
+           none of them load is there nothing to shade. */
+        img.onerror = () => { refused += 1; if (refused === total) fallBack(); };
+        /* The stage is never wider than about 900px, so 1400 was wasted. */
+        img.src = asset(m.img + '-900.jpg');
+      });
+    }
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) { io.disconnect(); loadSamples(); }
+      }, { rootMargin: '700px 0px' });
+      io.observe(root);
+    } else {
+      loadSamples();
+    }
 
     window.addEventListener('resize', resize);
     /* A restored context has nothing in it, so the only honest answer is to
@@ -1946,6 +1991,7 @@ void main() {
     renderShowcase();
     initMaterialsMorph();
     renderWallGuide();
+    renderEntrances();
     renderQuotes();
     renderSignature();
 

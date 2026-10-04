@@ -63,7 +63,7 @@ const IMAGEKIT = {
      A new photo therefore works the moment it is dropped in. Upload it to
      ImageKit later, delete its name from this list, and it moves to the CDN
      with no other change. */
-  localOnly: ['showcase-*', 'service-bathroom', 'service-kitchen-dubai', 'luxury-media-wall-film', 'hero-interior', 'showcase-film', 'why-film',
+  localOnly: ['showcase-*', 'entry-*', 'service-bathroom', 'service-kitchen-dubai', 'luxury-media-wall-film', 'hero-interior', 'showcase-film', 'why-film',
               'material-calacatta-marble', 'material-calacatta-gold', 'material-travertine',
               'material-charcoal-stone', 'material-oak-fluted', 'material-walnut-fluted',
               'material-white-fluted', 'material-smoked-oak', 'material-brass-walnut',
@@ -585,6 +585,55 @@ const SERVICES = [
   }
 ];
 
+/* -------------------------------------------------------------- ENTRANCES */
+/* Entrance and hallway joinery: the same trade as a media wall - panelling,
+   concealed lighting, a floating unit - at the front door. Each entry is a
+   design direction rather than a named project, so the copy describes what
+   is built, not where. */
+const ENTRANCES = [
+  {
+    img: 'assets/img/entry-blossom-mirror',
+    title: 'Backlit Curved Mirror',
+    text: 'A soft-edged mirror on a halo of warm LED, with planting set against plaster.',
+    alt: 'Curved full-height mirror with an LED halo and blossom branches in a hallway'
+  },
+  {
+    img: 'assets/img/entry-lit-mirror-wardrobe',
+    title: 'Mirror and Wardrobe Run',
+    text: 'A lit mirror panel beside floor-to-ceiling wardrobe doors in a matching finish.',
+    alt: 'Hallway with a backlit mirror panel beside a full-height beige wardrobe run'
+  },
+  {
+    img: 'assets/img/entry-fluted-oak-console',
+    title: 'Fluted Oak Entrance',
+    text: 'Oak flutes run wall to wall, with a floating console and a mirrored return.',
+    alt: 'Fluted oak hallway panelling with a floating console and tall mirror'
+  },
+  {
+    img: 'assets/img/entry-arch-mirror-bench',
+    title: 'Arched Mirror with Bench',
+    text: 'A round lit mirror between a seat with shoe storage and a slatted divider.',
+    alt: 'Round backlit mirror with a cushioned bench, storage and a slatted oak divider'
+  },
+  {
+    img: 'assets/img/entry-fluted-arch-gold',
+    title: 'Fluted Arch in Brass',
+    text: 'A half-round mirror cut into fluted panelling, with a dark floating drawer.',
+    alt: 'Half-round backlit mirror set into fluted panelling with a floating drawer unit'
+  },
+  {
+    img: 'assets/img/entry-marble-arch-divider',
+    title: 'Marble Arch Divider',
+    text: 'An arched opening framed in marble, splitting the entrance from the dining room.',
+    alt: 'Arched marble-framed opening between an entrance hall and a dining room'
+  },
+  {
+    img: 'assets/img/entry-lit-mirror-console',
+    title: 'Lit Mirror and Console',
+    text: 'A full-height mirror edged in light above a slim console, for a narrow hall.',
+    alt: 'Full-height mirror edged with warm light above a slim wooden console'
+  }
+];
 /* ---------------------------------------------------------------- PROCESS */
 const PROCESS = [
   { n: '01', title: 'Consultation',       text: 'Tell us about your space and requirements. We visit, measure and understand how the room is actually used.' },

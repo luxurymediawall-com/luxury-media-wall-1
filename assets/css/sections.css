@@ -1642,3 +1642,50 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   .form .field::after, .form .btn::after { display: none; }
   .form .field:hover input, .form .field:hover select, .form .field:hover textarea { transform: none; }
 }
+
+/* =============================== ENTRANCES ============================== */
+/* Seven entrance designs on the same glass as the other cards. The
+   photographs are portrait, so the frame is 3:4 and the grid runs three
+   across on a desktop, two on a tablet and one on a phone. */
+.entry__grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.1rem, 2.2vw, 2rem);
+}
+.entry {
+  position: relative; isolation: isolate; overflow: hidden; margin: 0;
+  display: flex; flex-direction: column;
+  background: rgba(255, 255, 255, .66);
+  -webkit-backdrop-filter: blur(16px) saturate(1.06);
+          backdrop-filter: blur(16px) saturate(1.06);
+  border: 1px solid rgba(255, 255, 255, .55);
+  transition: transform .7s var(--ease), box-shadow .7s var(--ease);
+}
+.entry:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
+.entry__media { display: block; position: relative; aspect-ratio: 3 / 4; overflow: hidden; background: var(--ivory-deep); }
+.entry__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s var(--ease); }
+.entry:hover .entry__media img { transform: scale(1.05); }
+.entry__body { padding: clamp(1.1rem, 2vw, 1.5rem); }
+.entry__body h3 { font-size: clamp(1rem, 1.4vw, 1.2rem); color: var(--ink); }
+.entry__body p { margin-top: .5rem; font-size: .84rem; line-height: 1.7; color: var(--muted); }
+
+/* The same champagne beam the other panes run. */
+.entry::before, .entry::after {
+  content: ""; position: absolute; z-index: 3; height: 2px; width: 45%;
+  background: linear-gradient(to right, transparent, var(--champagne), transparent);
+  opacity: 0; pointer-events: none;
+}
+.entry::before { top: 0; left: 0; }
+.entry::after { bottom: 0; right: 0; }
+.entry:hover::before, .entry:focus-within::before { opacity: .85; animation: beamRight 2.4s var(--ease-soft) infinite; }
+.entry:hover::after,  .entry:focus-within::after  { opacity: .85; animation: beamLeft 2.4s var(--ease-soft) .5s infinite; }
+
+@media (max-width: 1100px) { .entry__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) {
+  .entry__grid { grid-template-columns: 1fr; }
+  .entry { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255, 255, 255, .88); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .entry::before, .entry::after { display: none; }
+  .entry:hover { transform: none; }
+  .entry:hover .entry__media img { transform: none; }
+}
