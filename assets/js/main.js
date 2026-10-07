@@ -358,6 +358,16 @@
     $('#modalImg').src = asset(p.img + '-900.jpg');
     $('#modalImg').srcset = srcset(p.img);
     $('#modalImg').alt = p.alt;
+
+    /* The magnifier starts on whatever the modal is already showing, which
+       is free, and records the larger file for initLens to swap in on the
+       first hover. Loading it here instead would put a few hundred kilobytes
+       on every project opened, most of which are never magnified. */
+    const lensImg = $('#modalLensImg');
+    if (lensImg) {
+      lensImg.src = asset(p.img + '-900.jpg');
+      lensImg.dataset.hi = asset(p.img + '-1400.jpg');
+    }
     $('#modalBadge').innerHTML = `Project <i>${p.n}</i> / ${String(PROJECTS.length).padStart(2, '0')}`;
     $('#modalTitle').textContent = p.title;
     $('#modalIntro').textContent = p.short;
@@ -2027,6 +2037,9 @@ void main() {
             <span class="picker__num">${esc(f.n)} <i>/</i> ${String(PROJECTS.length).padStart(2, '0')}</span>
             <span class="picker__title">${esc(f.title)}</span>
             <span class="picker__desc">${esc(f.short)}</span>
+            <span class="picker__cta">View the full specification
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
           </span>
         </span>
       </button>`).join('');
@@ -2067,9 +2080,15 @@ void main() {
       settle = setTimeout(() => { el.removeEventListener('transitionend', done); bring(el); }, 780);
     };
 
+    /* The same two-step the carousel used: a shut panel opens, and the one
+       already open goes through to its specification. Without this the row
+       names nineteen walls and gives no way to read any of them. */
     row.addEventListener('click', (e) => {
       const btn = e.target.closest('.picker__item');
-      if (btn) open(Number(btn.dataset.i));
+      if (!btn) return;
+      const i = Number(btn.dataset.i);
+      if (btn.getAttribute('aria-expanded') === 'true') openModal(i);
+      else open(i);
     });
 
     /* Left and right walk the row; Home and End jump to the ends. Focus
@@ -2108,6 +2127,93 @@ void main() {
     setTimeout(show, 2500);
   }
 
+  /* =========================================================== 21. LENS */
+  /* A magnifier over a photograph. A second copy of the image is scaled up
+     and masked to a disc under the cursor; the mask is the whole trick,
+     since an unmasked copy would just cover the original.
+
+     Two things the pasted version did not do, and both matter here. The
+     zoom source is the 1400px file rather than the 900px one the modal
+     shows - magnifying a 900px image is just bigger pixels, which is the
+     opposite of the point when somebody is checking a joint line. And it
+     is fetched on the first hover rather than with the modal, so opening a
+     project to read the specification costs nothing extra.
+
+     Mouse only: the lens sits under the pointer, so on a touch screen the
+     magnified disc would be exactly where the finger is. */
+  function initLens() {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    /* Safari needs the prefixed property; without support for either, the
+       zoomed copy would cover the whole photograph instead of a disc. */
+    const canMask = CSS.supports('mask-image', 'radial-gradient(circle, #000, transparent)') ||
+                    CSS.supports('-webkit-mask-image', 'radial-gradient(circle, #000, transparent)');
+    if (!canMask) return;
+
+    $$('[data-lens]').forEach((box) => {
+      const lens = $('.lens', box);
+      const zoom = $('.lens__zoom', box);
+      const img = $('.lens__img', box);
+      const ring = $('.lens__ring', box);
+      if (!lens || !zoom || !img) return;
+
+      const SIZE = 180;
+      const ZOOM = 2.1;
+      const half = SIZE / 2;
+      box.style.setProperty('--lens-size', SIZE + 'px');
+
+      let raf = 0;
+      let px = 0, py = 0;
+      let upgraded = false;
+
+      const draw = () => {
+        raf = 0;
+        const mask = `radial-gradient(circle ${half}px at ${px}px ${py}px, #000 99%, transparent 100%)`;
+        lens.style.webkitMaskImage = mask;
+        lens.style.maskImage = mask;
+        zoom.style.transform = `scale(${ZOOM})`;
+        zoom.style.transformOrigin = `${px}px ${py}px`;
+        if (ring) ring.style.transform = `translate(${px - half}px, ${py - half}px)`;
+      };
+
+      /* Swap in the larger file the first time the lens is actually used. */
+      const upgrade = () => {
+        if (upgraded) return;
+        upgraded = true;
+        const hi = img.dataset.hi;
+        if (!hi) return;
+        const probe = new Image();
+        probe.onload = () => { img.src = hi; };
+        probe.src = hi;
+      };
+
+      box.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        if (!img.getAttribute('src')) return;   /* nothing open yet */
+        upgrade();
+        const r = box.getBoundingClientRect();
+        px = e.clientX - r.left; py = e.clientY - r.top;
+        draw();
+        box.classList.add('is-lensing');
+      });
+
+      box.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse' || !box.classList.contains('is-lensing')) return;
+        const r = box.getBoundingClientRect();
+        px = e.clientX - r.left; py = e.clientY - r.top;
+        if (!raf) raf = requestAnimationFrame(draw);
+      });
+
+      const off = () => {
+        box.classList.remove('is-lensing');
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      };
+      box.addEventListener('pointerleave', off);
+      /* The modal can be closed from under the cursor with Escape. */
+      box.addEventListener('pointercancel', off);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') off(); });
+    });
+  }
+
   /* ========================================================= 19. MARQUEE */
   function initMarquee() {
     const track = $('#marqueeTrack');
@@ -2144,6 +2250,7 @@ void main() {
     initFormTilt();
     initCoverflow();
     initMarquee();
+    initLens();
     initFloat();
 
     initWordReveal();

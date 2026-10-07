@@ -1885,3 +1885,65 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   .picker__item { opacity: 1; transform: none; }
   .picker__img { transform: scale(1); }
 }
+
+/* ============================================================== LENS ===
+   A magnifier over a photograph: a second copy of the same image, scaled
+   up and masked to a disc that follows the cursor. The mask is what makes
+   it a lens - without it the zoomed copy would simply cover the original.
+
+   Mouse only. The lens is positioned under the pointer, so on a touch
+   screen the magnified disc sits exactly beneath the finger that is hiding
+   it. initLens never attaches on a coarse pointer, and these rules keep it
+   invisible if it somehow does. */
+.lens, .lens__ring {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .28s ease;
+}
+.lens {
+  inset: 0;
+  overflow: hidden;
+  z-index: 4;
+}
+.lens__zoom { position: absolute; inset: 0; }
+/* .modal__media img already sets width/height/object-fit, so the zoomed
+   copy lines up with the original without repeating any of it here. */
+
+.lens__ring {
+  top: 0; left: 0;
+  width: var(--lens-size, 180px);
+  height: var(--lens-size, 180px);
+  border-radius: 50%;
+  z-index: 5;
+  border: 1px solid rgba(255, 255, 255, .5);
+  box-shadow: 0 0 0 1px rgba(18, 16, 13, .22), 0 12px 34px rgba(18, 16, 13, .34);
+}
+
+[data-lens].is-lensing .lens,
+[data-lens].is-lensing .lens__ring { opacity: 1; }
+
+/* The cursor is already the subject here; the dot would fight the ring. */
+[data-lens].is-lensing { cursor: none; }
+
+@media (hover: none), (pointer: coarse) {
+  .lens, .lens__ring { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lens, .lens__ring { transition-duration: .01ms; }
+}
+
+/* The open panel's way through to the specification. Hidden until the panel
+   is open, like the title and the description it sits under. */
+.picker__cta {
+  display: inline-flex; align-items: center; gap: .5rem;
+  margin-top: .55rem;
+  font-size: .68rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--white);
+  opacity: 0; transform: translateX(25px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.picker__item[aria-expanded="true"] .picker__cta { opacity: 1; transform: none; }
+.picker__cta svg { width: 15px; height: 15px; transition: transform .35s var(--ease); }
+.picker__item[aria-expanded="true"]:hover .picker__cta svg { transform: translateX(4px); }
+@media (max-width: 680px) { .picker__cta { font-size: .62rem; margin-top: .4rem; } }
