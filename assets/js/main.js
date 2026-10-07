@@ -108,6 +108,18 @@
       fluted:  '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 4v24M11 4v24M16 4v24M21 4v24M26 4v24"/><path d="M3 4h26M3 28h26"/></svg>',
       led:     '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="8" width="22" height="6" rx="1"/><path d="M8 18v3M13 18v5M19 18v5M24 18v3M3 27h26"/></svg>',
       storage: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="4" width="24" height="24"/><path d="M16 4v24M4 16h24"/><path d="M12 10h2M18 10h2M12 22h2M18 22h2"/></svg>'
+    },
+
+    /* Line icons for the finish picker, drawn to the same 32px grid as the
+       service icons above. */
+    fin: {
+      marble:  '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="4" width="24" height="24" rx="1"/><path d="M16 4v24"/><path d="M16 10c-3 2-5 1-7 3M16 18c-3 1-4 4-7 4M16 11c3 2 5 0 7 3M16 20c3 0 4 3 7 3"/></svg>',
+      onyx:    '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="5" width="18" height="22" rx="1"/><path d="M11 10l4 6-3 6M21 9l-3 7 3 7"/><path d="M3 16h2M27 16h2M16 2v2M16 28v2"/></svg>',
+      fluted:  '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5h24M4 27h24"/><path d="M8 5v22M13 5v22M19 5v22M24 5v22"/></svg>',
+      plaster: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="4" width="24" height="24" rx="1"/><path d="M9 21c4-1 6-5 10-5.5"/></svg>',
+      stone:   '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="4" width="24" height="24" rx="1"/><path d="M4 12l6 3 6-4 5 4 5-3M4 21l5-2 6 3 6-4 5 2"/></svg>',
+      timber:  '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="4" width="24" height="24" rx="1"/><path d="M10 4c-2 6-2 18 0 24M18 4c-3 7-3 17 0 24M25 6c-2 5-2 15 0 20"/></svg>',
+      metal:   '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="9" width="24" height="14" rx="1"/><path d="M4 14h24M4 18h24"/></svg>'
     }
   };
 
@@ -1975,6 +1987,127 @@ void main() {
     play();
   }
 
+  /* ================================================== 20. FINISH PICKER */
+  /* Five photographs in a row; the chosen one takes most of the width. All
+     of the movement is CSS - this only owns which panel is open, the
+     staggered entrance, and arrow-key travel along the row.
+
+     Each panel is a real button carrying aria-expanded, so the state is
+     announced rather than implied by width alone, and the title and
+     description stay in the markup whether the panel is open or shut. */
+  function renderFinishes() {
+    const row = $('#finishRow');
+    if (!row || typeof PROJECTS === 'undefined' || !PROJECTS.length) return;
+
+    /* One panel per completed design, read straight off PROJECTS, so the row
+       never falls out of step with the work. The icon is derived from the
+       title and the material list rather than stored against each entry: the
+       list grows, and a new wall should not need a new icon key to appear. */
+    const iconFor = (name) => {
+      const n = String(name).toLowerCase();
+      if (/fluted/.test(n)) return 'fluted';
+      if (/microcement|cement/.test(n)) return 'plaster';
+      if (/brass|aluminium|profile/.test(n)) return 'metal';
+      if (/marble|calacatta/.test(n)) return 'marble';
+      if (/travertine|stone/.test(n)) return 'stone';
+      if (/oak|walnut|veneer|timber/.test(n)) return 'timber';
+      return 'marble';
+    };
+
+    row.innerHTML = PROJECTS.map((f, i) => `
+      <button type="button" class="picker__item" data-i="${i}"
+              aria-expanded="${i === 0 ? 'true' : 'false'}"
+              style="transition-delay:${REDUCED ? 0 : Math.min(i, 8) * 90}ms">
+        <img class="picker__img" src="${asset(f.img + '-900.jpg')}"
+             srcset="${srcsetCard(f.img)}" sizes="(max-width: 700px) 86vw, 620px"
+             alt="${esc(f.alt)}" loading="lazy" decoding="async">
+        <span class="picker__label">
+          <span class="picker__icon">${ICONS.fin[iconFor(f.title + ' ' + (f.materials || ''))]}</span>
+          <span class="picker__text">
+            <span class="picker__num">${esc(f.n)} <i>/</i> ${String(PROJECTS.length).padStart(2, '0')}</span>
+            <span class="picker__title">${esc(f.title)}</span>
+            <span class="picker__desc">${esc(f.short)}</span>
+          </span>
+        </span>
+      </button>`).join('');
+
+    const items = $$('.picker__item', row);
+
+    /* Nineteen panels do not fit a screen, so the row scrolls sideways and
+       the panel that opens is pulled into view. The measurement has to wait
+       for the width transition to finish: taken a frame after the click it
+       reads a panel that is still a 52px sliver, and the row scrolls to
+       where the panel used to be. Only the row scrolls, never the page. */
+    let settle = 0;
+    const bring = (el) => {
+      const r = el.getBoundingClientRect();
+      const box = row.getBoundingClientRect();
+      if (r.left >= box.left - 2 && r.right <= box.right + 2) return;
+      /* Pull it to the left edge, unless that would overscroll the end. */
+      row.scrollTo({
+        left: row.scrollLeft + (r.left - box.left) - 20,
+        behavior: REDUCED ? 'auto' : 'smooth'
+      });
+    };
+    const open = (i) => {
+      items.forEach((el, n) => el.setAttribute('aria-expanded', n === i ? 'true' : 'false'));
+      const el = items[i];
+      if (!el) return;
+      clearTimeout(settle);
+      if (REDUCED) { bring(el); return; }
+      const done = (e) => {
+        if (e.propertyName !== 'flex-basis') return;
+        el.removeEventListener('transitionend', done);
+        clearTimeout(settle);
+        bring(el);
+      };
+      el.addEventListener('transitionend', done);
+      /* transitionend does not fire if the panel was already open, or if the
+         tab was hidden while it ran. */
+      settle = setTimeout(() => { el.removeEventListener('transitionend', done); bring(el); }, 780);
+    };
+
+    row.addEventListener('click', (e) => {
+      const btn = e.target.closest('.picker__item');
+      if (btn) open(Number(btn.dataset.i));
+    });
+
+    /* Left and right walk the row; Home and End jump to the ends. Focus
+       moves with the key, and opening follows the focus so the keyboard
+       sees the same thing the mouse does. */
+    row.addEventListener('keydown', (e) => {
+      const btn = e.target.closest('.picker__item');
+      if (!btn) return;
+      const i = Number(btn.dataset.i);
+      let to = -1;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') to = (i + 1) % items.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') to = (i - 1 + items.length) % items.length;
+      else if (e.key === 'Home') to = 0;
+      else if (e.key === 'End') to = items.length - 1;
+      if (to < 0) return;
+      e.preventDefault();
+      items[to].focus();
+      open(to);
+    });
+
+    /* The stagger only reads as an entrance if it starts when the row is on
+       screen. If IntersectionObserver is missing, show it straight away
+       rather than leaving five invisible panels behind. */
+    const show = () => row.classList.add('is-in');
+    if (REDUCED || !('IntersectionObserver' in window)) { show(); return; }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        show();
+        io.disconnect();
+      });
+    }, { rootMargin: '0px 0px -12% 0px' });
+    io.observe(row);
+    /* A belt-and-braces backstop: if the observer never fires (it has been
+       known to sit silent in embedded web views), the panels still appear. */
+    setTimeout(show, 2500);
+  }
+
   /* ========================================================= 19. MARQUEE */
   function initMarquee() {
     const track = $('#marqueeTrack');
@@ -1991,6 +2124,7 @@ void main() {
     initServicesFlow();
     initJourney();
     renderShowcase();
+    renderFinishes();
     initMaterialsMorph();
     renderWallGuide();
     renderEntrances();

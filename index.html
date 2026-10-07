@@ -257,17 +257,34 @@
   </div>
 </div>
 
-<!-- ==================================================== SHOWCASE ======= -->
-<!-- A purely visual band: the portfolio drifts past one photograph at a
-     time, with nothing set over it. Cards are dealt from SHOWCASE in
-     site-config.js by main.js; the band carries its own height because its
-     contents are all absolutely positioned. -->
-<div class="showcase" aria-hidden="true">
-  <div class="showcase__stage">
-    <div class="showcase__inner" id="showcaseInner"></div>
+<!-- ===================================================== DESIGNS ======= -->
+<!-- Replaces the drifting photo corridor that used to sit here. That band
+     was decorative only - aria-hidden, no titles, nothing to do - so the
+     same photographs now carry their name and open when you pick one.
+     One panel per entry in PROJECTS, dealt by main.js, so this row and the
+     project modal can never disagree about what has been built. -->
+<section class="section picker" id="designs">
+  <div class="shell">
+    <div class="section-head section-head--split">
+      <div>
+        <p class="eyebrow" data-reveal>Every Wall We Have Built</p>
+        <h2 class="h1 mt-6 reveal-words" data-reveal="fade">Nineteen designs</h2>
+      </div>
+      <div class="section-head__aside">
+        <p class="lede" data-reveal>
+          Every completed wall, end to end. Pick one to open it; drag the row
+          sideways for the rest.
+        </p>
+      </div>
+    </div>
   </div>
-  <div class="showcase__scrim"></div>
-</div>
+
+  <div class="picker__row" id="finishRow" role="group"
+       aria-label="Completed wall designs - choose one to open it"
+       data-reveal>
+    <!-- rendered from FINISHES in site-config.js -->
+  </div>
+</section>
 
 <!-- ================================================= GLASS GALLERY ===== -->
 <!-- The project photographs in one endless row, drawn on a WebGL canvas and

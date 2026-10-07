@@ -1700,3 +1700,188 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   font-weight: 600; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
   color: var(--ink); margin-right: .4rem;
 }
+
+/* ====================================================== FINISH PICKER ===
+   A row of photographs where the chosen one takes most of the width and the
+   rest stay as slivers. Everything animates off two flex-grow values, so
+   there is nothing to measure and nothing to keep in sync on resize.
+
+   On a phone the row turns into a column and the same two values open a
+   panel downwards instead of sideways - a 60px wide sliver on a 390px
+   screen would be unreadable and untappable. */
+.picker__row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  max-width: 1180px;
+  margin: clamp(1.5rem, 5vh, 3rem) auto 0;
+  padding-inline: var(--gutter);
+  height: clamp(340px, 54vh, 460px);
+  /* Nineteen panels will not fit any screen, so the row scrolls sideways
+     rather than squeezing every sliver below a tappable width. The open
+     panel is scrolled into view by the renderer. */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+.picker__row::-webkit-scrollbar { height: 6px; }
+.picker__row::-webkit-scrollbar-track { background: transparent; }
+.picker__row::-webkit-scrollbar-thumb {
+  background: rgba(23, 23, 23, .22); border-radius: 3px;
+}
+
+.picker__item {
+  position: relative;
+  /* Fixed widths rather than flex-grow. Nineteen panels overflow the row,
+     and once a flex line overflows there is no free space left to grow
+     into - every panel would sit at its minimum and the accordion would
+     stop opening. A basis that changes is immune to that. */
+  flex: 0 0 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid rgba(23, 23, 23, .10);
+  border-radius: 3px;
+  background: var(--ivory-deep);
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 10px 30px rgba(18, 16, 13, .10);
+  /* Only the properties that actually change are listed: animating `all`
+     would also animate the border colour of nineteen elements every frame. */
+  transition: flex-basis .7s var(--ease), box-shadow .7s var(--ease),
+              border-color .7s var(--ease), opacity .6s ease, transform .6s var(--ease);
+}
+.picker__item[aria-expanded="true"] {
+  flex-basis: min(620px, 74vw);
+  border-color: rgba(23, 23, 23, .22);
+  box-shadow: 0 24px 60px rgba(18, 16, 13, .22);
+  z-index: 2;
+}
+.picker__item:focus-visible {
+  outline: 2px solid var(--champagne-dim);
+  outline-offset: 3px;
+}
+
+/* The entrance: each panel slides in from the left, staggered. The delay is
+   set per item by the renderer. */
+.picker__item {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+.picker__row.is-in .picker__item {
+  opacity: 1;
+  transform: none;
+}
+
+.picker__img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  /* Closed panels sit zoomed in, so opening one pulls the photograph back
+     and reveals the wall rather than just widening a crop. */
+  transform: scale(1.18);
+  transition: transform .7s var(--ease);
+}
+.picker__item[aria-expanded="true"] .picker__img { transform: scale(1); }
+
+/* White type needs a ground. The gradient only deepens on the open panel,
+   where there are two lines to read rather than an icon. */
+.picker__item::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 62%;
+  /* Measured, not guessed: across the five photographs the weakest point
+     under the text is 64% here, which puts the title at 6.1:1 and the
+     description at 5.5:1. The earlier .34/.80 pair dropped the description
+     to 3.3:1 over the split-face stone. */
+  background: linear-gradient(to bottom, rgba(12, 11, 9, 0) 0%,
+              rgba(12, 11, 9, .42) 42%, rgba(12, 11, 9, .88) 100%);
+  opacity: .62;
+  transition: opacity .7s var(--ease);
+  pointer-events: none;
+}
+.picker__item[aria-expanded="true"]::after { opacity: 1; }
+
+.picker__label {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 16px 18px;
+  width: 100%;
+}
+.picker__icon {
+  flex: 0 0 44px;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 242, 236, .45);
+  background: rgba(18, 16, 13, .55);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  color: var(--ivory);
+}
+.picker__icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+
+.picker__text { min-width: 0; }
+.picker__title, .picker__desc {
+  display: block;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(25px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.picker__item[aria-expanded="true"] .picker__title,
+.picker__item[aria-expanded="true"] .picker__desc {
+  opacity: 1; transform: none;
+}
+
+.picker__num {
+  display: block;
+  margin-bottom: 3px;
+  font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--champagne);
+  opacity: 0; transform: translateX(25px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.picker__item[aria-expanded="true"] .picker__num { opacity: 1; transform: none; }
+.picker__num i { font-style: normal; opacity: .55; }
+.picker__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  color: var(--white);
+  line-height: 1.2;
+}
+.picker__desc {
+  margin-top: 4px;
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--ivory);
+  white-space: normal;
+}
+
+
+/* The row keeps its shape on a phone rather than stacking: nineteen panels
+   stacked would be a two-thousand pixel column to scroll past. Sideways,
+   the same nineteen are six swipes and every sliver stays tappable. */
+@media (max-width: 680px) {
+  .picker__row { height: clamp(300px, 46vh, 380px); gap: 5px; }
+  .picker__item { flex-basis: 52px; }
+  .picker__item[aria-expanded="true"] { flex-basis: min(620px, 82vw); }
+  .picker__desc { display: block; }
+  .picker__title { white-space: normal; }
+  .picker__label { padding: 0 12px 14px; gap: 10px; }
+  .picker__icon { flex-basis: 38px; width: 38px; height: 38px; }
+  .picker__icon svg { width: 19px; height: 19px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picker__item, .picker__img, .picker__title, .picker__desc, .picker__item::after {
+    transition-duration: .14s !important;
+    transition-delay: 0s !important;
+  }
+  .picker__item { opacity: 1; transform: none; }
+  .picker__img { transform: scale(1); }
+}
