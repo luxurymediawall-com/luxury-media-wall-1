@@ -231,16 +231,34 @@
     </div>
   </div>
 
-  <!-- Photographs travelling against the scroll as the frame clears. -->
-  <div class="reveal__parallax" aria-hidden="true">
-    <img class="reveal__px reveal__px--a" data-start="-200" data-end="200"
-         src="assets/img/project-08-backlit-onyx-900.jpg" alt="" loading="lazy" decoding="async">
-    <img class="reveal__px reveal__px--b" data-start="200" data-end="-250"
-         src="assets/img/project-05-full-height-900.jpg" alt="" loading="lazy" decoding="async">
-    <img class="reveal__px reveal__px--c" data-start="-200" data-end="200"
-         src="assets/img/project-06-minimal-light-900.jpg" alt="" loading="lazy" decoding="async">
-    <img class="reveal__px reveal__px--d" data-start="0" data-end="-500"
-         src="assets/img/project-02-warm-oak-900.jpg" alt="" loading="lazy" decoding="async">
+  <!-- The sample board. Prints pegged to a sagging line: drag it, or use the
+       arrows, and they slide along and swing on their pegs with whatever
+       speed you give them. It replaces four photographs that used to drift
+       past here with nothing to say - aria-hidden, empty alts, no titles.
+       Cards are pegged on from MATERIALS by main.js. -->
+  <div class="pline" id="pline" tabindex="0" role="region"
+       aria-roledescription="carousel" aria-label="Material samples pegged to a line">
+    <svg class="pline__string" aria-hidden="true">
+      <path id="plineString" fill="none" stroke="rgba(245,242,236,.4)"
+            stroke-width="1.5" stroke-linecap="round"></path>
+    </svg>
+    <div class="pline__cards" id="plineCards"></div>
+
+    <div class="pline__bar">
+      <div class="pline__cap">
+        <span class="pline__title" id="plineTitle"></span>
+        <span class="pline__sub" id="plineSub"></span>
+      </div>
+      <span class="pline__count" id="plineCount" aria-hidden="true"></span>
+      <button type="button" class="pline__btn" id="plinePrev" aria-label="Previous sample">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+      <button type="button" class="pline__btn" id="plineNext" aria-label="Next sample">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6 3 5 5-5 5" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+    </div>
+
+    <p class="sr-only" id="plineLive" aria-live="polite"></p>
   </div>
   <div class="reveal__handover" aria-hidden="true"></div>
 </section>

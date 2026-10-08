@@ -1947,3 +1947,131 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
 .picker__cta svg { width: 15px; height: 15px; transition: transform .35s var(--ease); }
 .picker__item[aria-expanded="true"]:hover .picker__cta svg { transform: translateX(4px); }
 @media (max-width: 680px) { .picker__cta { font-size: .62rem; margin-top: .4rem; } }
+
+/* ======================================================= SAMPLE LINE ===
+   Instant prints pegged to a sagging string, on the reveal band's ink
+   ground. The string is one SVG path redrawn each frame; every print is
+   absolutely placed on it and rotated about its peg. Nothing here is
+   laid out by the browser - initSampleLine writes the transforms - so
+   these rules only describe what a print looks like, never where it is. */
+.pline {
+  position: relative;
+  z-index: 3;
+  height: clamp(420px, 68vh, 620px);
+  overflow: hidden;
+  user-select: none; -webkit-user-select: none;
+  touch-action: pan-y;
+  cursor: grab;
+  outline: none;
+}
+.pline[data-drag="1"] { cursor: grabbing; }
+.pline:focus-visible { box-shadow: inset 0 0 0 2px var(--champagne); }
+
+.pline__string {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; overflow: visible;
+}
+.pline__cards { position: absolute; inset: 0; }
+
+.pline__card {
+  position: absolute; left: 0; top: 0;
+  width: var(--pl-cw, 240px);
+  transform-origin: 50% 0;
+  will-change: transform;
+  cursor: inherit;
+}
+/* The print itself: a white border, heavier at the foot, the way an
+   instant photograph is. */
+.pline__print {
+  margin-top: 10px;
+  background: #FBFAF7;
+  padding: 10px 10px 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .18), 0 18px 30px -16px rgba(0, 0, 0, .55);
+  transition: transform .5s cubic-bezier(.2, .7, .2, 1), filter .5s ease;
+}
+.pline__card[data-on="0"] .pline__print {
+  transform: scale(.9);
+  filter: saturate(.72) brightness(.95);
+}
+.pline__shot {
+  position: relative; aspect-ratio: 1; overflow: hidden;
+  background: var(--ivory-deep);
+}
+.pline__shot img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; pointer-events: none;
+}
+.pline__note {
+  height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 6px;
+  font-family: var(--font-serif);
+  font-size: 14px; font-style: italic;
+  color: #3B3833;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* The peg straddling the string. */
+.pline__peg {
+  position: absolute; left: 50%; top: 0;
+  width: 10px; height: 26px; margin-left: -5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #C9A67A, #E3C9A1 45%, #B8915F);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, .3);
+}
+.pline__peg::after {
+  content: ""; position: absolute; left: 4px; top: 8px;
+  width: 2px; height: 7px; border-radius: 1px;
+  background: rgba(80, 60, 30, .45);
+}
+
+.pline__bar {
+  position: absolute; z-index: 4;
+  left: var(--gutter); right: var(--gutter);
+  bottom: clamp(18px, 4vh, 38px);
+  display: flex; align-items: center; gap: clamp(12px, 2vw, 24px);
+  cursor: default;
+}
+.pline__cap { flex: 1; min-width: 0; }
+.pline__title {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: clamp(18px, 2.2vw, 26px); line-height: 1.15;
+  color: var(--white);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pline__sub {
+  display: block; margin-top: 4px;
+  font-size: 13px; line-height: 1.4;
+  color: rgba(245, 242, 236, .72);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pline__count {
+  font-size: 12px; letter-spacing: .14em;
+  color: rgba(245, 242, 236, .6); white-space: nowrap;
+}
+.pline__count b { color: var(--white); font-weight: 500; }
+
+.pline__btn {
+  flex: 0 0 auto;
+  width: 40px; height: 40px; padding: 0;
+  display: grid; place-items: center;
+  border: 1px solid rgba(245, 242, 236, .28);
+  border-radius: 50%;
+  background: transparent; color: var(--ivory);
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+.pline__btn svg { width: 16px; height: 16px; }
+.pline__btn:hover { background: var(--ivory); color: var(--ink); border-color: var(--ivory); }
+.pline__btn:focus-visible { outline: 2px solid var(--champagne); outline-offset: 2px; }
+
+@media (max-width: 720px) {
+  .pline { height: clamp(380px, 60vh, 520px); }
+  .pline__note { height: 38px; font-size: 13px; }
+  .pline__sub { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pline__print { transition: none; }
+}
