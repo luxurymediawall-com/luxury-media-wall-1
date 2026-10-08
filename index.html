@@ -253,11 +253,11 @@
   </div>
 </section>
 
-<!-- ================================================= GLASS GALLERY ===== -->
-<!-- The project photographs in one endless row, drawn on a WebGL canvas and
-     seen through a liquid-glass lens. Without WebGL the strip below the
-     canvas is the gallery - see glass-carousel.js. -->
-<section class="section glass-band">
+<!-- ==================================================== VIEWFINDER ==== -->
+<!-- Replaces the liquid-glass WebGL row that used to sit here. Same
+     nineteen projects, no shader: only the wall in the frame lies flat and
+     the rest are folded away on their edge. -->
+<section class="section vfc-band">
   <div class="shell">
     <div class="section-head section-head--split">
       <div>
@@ -266,21 +266,38 @@
       </div>
       <div class="section-head__aside">
         <p class="lede" data-reveal>
-          Drag the row. Click a photograph to bring it to the middle, then click
-          it again to hold it open.
+          One wall in the frame at a time, the rest folded away on their edge.
+          Step through them, then open the one in the frame for its specification.
         </p>
       </div>
     </div>
   </div>
 
-  <div class="glass" id="glass" tabindex="0" role="region"
-       aria-roledescription="carousel" aria-label="Projects seen through glass">
-    <canvas class="glass__canvas" id="glassCanvas" aria-hidden="true"></canvas>
-    <ul class="glass__strip" id="glassStrip"></ul>
-    <p class="glass__title" id="glassTitle" aria-live="polite"></p>
-    <p class="glass__count" id="glassCount"></p>
-    <span class="glass__hint" id="glassHint" aria-hidden="true">View</span>
-    <button type="button" class="glass__close" id="glassClose">Close</button>
+  <!-- Only the wall in the frame lies flat. The rest are folded away on
+       their side - turned a quarter round and tipped back - so the row reads
+       as a stack of edges either side of the viewfinder. Dealt from PROJECTS
+       by main.js; click the one in the frame for its specification. -->
+  <div class="vfc" id="vfc" tabindex="0" role="region"
+       aria-roledescription="carousel"
+       aria-label="Completed walls, one in the frame at a time">
+    <div class="vfc__stage">
+      <div class="vfc__strip" id="vfcStrip"></div>
+      <div class="vfc__frame" id="vfcFrame" aria-hidden="true"></div>
+    </div>
+
+    <p class="vfc__title" id="vfcTitle" aria-hidden="true"></p>
+
+    <div class="vfc__controls">
+      <button type="button" class="vfc__btn" id="vfcPrev" aria-label="Previous wall">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <span class="vfc__count" id="vfcCount"></span>
+      <button type="button" class="vfc__btn" id="vfcNext" aria-label="Next wall">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <p class="sr-only" id="vfcLive" aria-live="polite" aria-atomic="true"></p>
   </div>
 </section>
 <!-- ===================================================== JOURNEY ======= -->
@@ -1058,7 +1075,6 @@
 <script src="assets/js/site-config.js"></script>
 <script src="assets/js/signature.js"></script>
 <script src="assets/js/main.js"></script>
-<script src="assets/js/glass-carousel.js" defer></script>
 <script src="assets/js/silk-gradient.js" defer></script>
 </body>
 </html>

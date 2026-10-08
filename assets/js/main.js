@@ -2214,6 +2214,195 @@ void main() {
     });
   }
 
+  /* ===================================================== 21. VIEWFINDER */
+  /* A row of square photographs where only the one in the frame lies flat.
+     The rest are folded away on their edge - turned a quarter round and
+     tipped back - so the row reads as a stack either side of the frame.
+
+     Nothing moves per frame here. The strip's spring is sampled once into a
+     CSS linear() easing and handed to the browser, which then runs the whole
+     move on the compositor; the fold and the widening run on their own
+     curve. The only work per step is setting a transform and a width. */
+  function initViewfinder() {
+    const root = $('#vfc');
+    const strip = $('#vfcStrip');
+    const frameEl = $('#vfcFrame');
+    if (!root || !strip || typeof PROJECTS === 'undefined' || !PROJECTS.length) return;
+
+    const items = PROJECTS;
+    const n = items.length;
+    const TILT = 60;   /* degrees tipped back */
+    const ROLL = 90;   /* degrees turned on its side */
+    const DUR = 0.8;   /* seconds */
+    const BOUNCE = 0.2;
+
+    /* ---- the spring, sampled into an easing curve ----------------------
+       A critically-ish damped spring has no closed-form CSS equivalent, so
+       it is evaluated at a few dozen points and handed over as linear().
+       The browser interpolates between them, which is indistinguishable at
+       this duration and costs nothing per frame. */
+    const springAt = (t, bounce, duration) => {
+      const zeta = 1 - Math.min(Math.max(bounce, 0), 0.9);
+      const w = (2 * Math.PI) / Math.max(duration, 0.05);
+      if (zeta >= 1) return 1 - Math.exp(-w * t) * (1 + w * t);
+      const wd = w * Math.sqrt(1 - zeta * zeta);
+      return 1 - Math.exp(-zeta * w * t) * (Math.cos(wd * t) + ((zeta * w) / wd) * Math.sin(wd * t));
+    };
+    function springEasing(bounce, duration, samples) {
+      samples = samples || 48;
+      const zeta = 1 - Math.min(Math.max(bounce, 0), 0.9);
+      const w = (2 * Math.PI) / Math.max(duration, 0.05);
+      /* Stop once the envelope is inside a thousandth. */
+      const T = Math.log(1000) / (zeta * w);
+      const pts = [];
+      for (let k = 0; k <= samples; k++) {
+        const v = k === samples ? 1 : springAt((k / samples) * T, bounce, duration);
+        pts.push(String(+v.toFixed(4)));
+      }
+      return { easing: 'linear(' + pts.join(', ') + ')', ms: Math.round(T * 1000) };
+    }
+
+    /* linear() is recent. Where it is missing, a plain curve carries the
+       move instead - slightly less springy, and nobody can tell without
+       the two side by side. */
+    const hasLinear = window.CSS && CSS.supports &&
+      CSS.supports('transition-timing-function', 'linear(0, 1)');
+    const spring = hasLinear
+      ? springEasing(BOUNCE, DUR)
+      : { easing: 'cubic-bezier(.22, 1, .36, 1)', ms: Math.round(DUR * 1000) };
+
+    const foldEase = `${DUR * 1000}ms var(--vfc-fold-ease)`;
+
+    strip.innerHTML = items.map((p, i) => `
+      <div class="vfc__slot">
+        <div class="vfc__holder">
+          <button type="button" class="vfc__photo" data-i="${i}"
+                  aria-label="${esc(p.title)}, ${i + 1} of ${n}" tabindex="-1">
+            <img src="${asset(p.img + '-480.jpg')}" srcset="${srcsetCard(p.img)}"
+                 sizes="340px" alt="${esc(p.alt)}" draggable="false"
+                 loading="lazy" decoding="async">
+          </button>
+        </div>
+      </div>`).join('');
+
+    const slots = $$('.vfc__slot', strip);
+    const holders = $$('.vfc__holder', strip);
+    const photos = $$('.vfc__photo', strip);
+    const titleEl = $('#vfcTitle');
+    const countEl = $('#vfcCount');
+    const liveEl = $('#vfcLive');
+    const prevBtn = $('#vfcPrev');
+    const nextBtn = $('#vfcNext');
+
+    const px = (name) => parseFloat(getComputedStyle(root).getPropertyValue(name)) || 0;
+    const pad2 = (v) => (v < 10 ? '0' + v : String(v));
+    const clampI = (i) => (i < 0 ? 0 : i > n - 1 ? n - 1 : Math.round(i));
+
+    let active = 0;
+    let movingUntil = 0;
+
+    strip.style.transition = `transform ${spring.ms}ms ${spring.easing}`;
+    holders.forEach((h) => { h.style.transition = `width ${foldEase}, transform ${foldEase}`; });
+
+    function apply(land) {
+      const folded = px('--vfc-folded');
+      const open = px('--vfc-open');
+      /* Everything before the open one is folded, so the strip moves by
+         folded widths rather than by whole photographs. */
+      strip.style.transform = `translateX(${-(folded * active)}px)`;
+
+      for (let i = 0; i < n; i++) {
+        const side = i < active ? 1 : i > active ? -1 : 0;
+        holders[i].style.width = (i === active ? open : folded) + 'px';
+        holders[i].style.transform = `rotateY(${side * TILT}deg) rotateZ(${side * ROLL}deg)`;
+        slots[i].style.zIndex = String(n - Math.abs(active - i));
+        photos[i].tabIndex = i === active ? 0 : -1;
+        if (i === active) photos[i].setAttribute('aria-current', 'true');
+        else photos[i].removeAttribute('aria-current');
+      }
+
+      const p = items[active] || {};
+      if (titleEl) titleEl.innerHTML = `<span>${esc(p.title || '')}</span>`;
+      if (countEl) countEl.innerHTML = `<b>${pad2(active + 1)}</b> / ${pad2(n)}`;
+      if (liveEl) liveEl.textContent = `Wall ${active + 1} of ${n}: ${p.title || ''}`;
+      if (prevBtn) prevBtn.disabled = active <= 0;
+      if (nextBtn) nextBtn.disabled = active >= n - 1;
+
+      /* Restart the frame's pulse. Removing the class is not enough on its
+         own - the animation only restarts once a reflow has been forced
+         between taking it off and putting it back. */
+      if (land && frameEl && !REDUCED) {
+        frameEl.classList.remove('is-land');
+        void frameEl.offsetWidth;
+        frameEl.classList.add('is-land');
+      }
+    }
+
+    function go(i) {
+      const next = clampI(i);
+      if (next === active) return;
+      const now = performance.now();
+      /* Input is ignored until the move has landed, so a held arrow key
+         cannot outrun the fold and leave photographs part-turned. */
+      if (!REDUCED && now < movingUntil) return;
+      movingUntil = REDUCED ? 0 : now + DUR * 1000;
+      active = next;
+      apply(true);
+    }
+
+    /* A swipe must not also count as a click on the photograph it ended on. */
+    const swipe = { id: -1, x: 0, done: false };
+
+    photos.forEach((b, i) => {
+      b.addEventListener('click', () => {
+        if (swipe.done) return;
+        if (i === active) openModal(i);
+        else go(i);
+      });
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', () => go(active - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => go(active + 1));
+
+    root.addEventListener('keydown', (e) => {
+      let to = -1;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') to = active + 1;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') to = active - 1;
+      else if (e.key === 'Home') to = 0;
+      else if (e.key === 'End') to = n - 1;
+      else return;
+      e.preventDefault();
+      go(to);
+    });
+
+    /* ---- swipe. One step per gesture, past a 40px threshold. */
+    root.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.vfc__controls')) return;
+      swipe.id = e.pointerId; swipe.x = e.clientX; swipe.done = false;
+    });
+    root.addEventListener('pointermove', (e) => {
+      if (swipe.id !== e.pointerId || swipe.done) return;
+      const dx = e.clientX - swipe.x;
+      if (Math.abs(dx) <= 40) return;
+      swipe.done = true;
+      go(active + (dx < 0 ? 1 : -1));
+    });
+    const end = () => { swipe.id = -1; setTimeout(() => { swipe.done = false; }, 0); };
+    root.addEventListener('pointerup', end);
+    root.addEventListener('pointercancel', end);
+
+    /* The widths come from CSS custom properties, so a breakpoint change
+       has to be re-read rather than recomputed here. */
+    let lw = window.innerWidth;
+    window.addEventListener('resize', () => {
+      if (Math.abs(window.innerWidth - lw) < 20) return;
+      lw = window.innerWidth;
+      apply(false);
+    });
+
+    apply(false);
+  }
+
   /* ========================================================= 19. MARQUEE */
   function initMarquee() {
     const track = $('#marqueeTrack');
@@ -2251,6 +2440,7 @@ void main() {
     initCoverflow();
     initMarquee();
     initLens();
+    initViewfinder();
     initFloat();
 
     initWordReveal();

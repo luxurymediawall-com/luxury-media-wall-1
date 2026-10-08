@@ -1947,3 +1947,129 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
 .picker__cta svg { width: 15px; height: 15px; transition: transform .35s var(--ease); }
 .picker__item[aria-expanded="true"]:hover .picker__cta svg { transform: translateX(4px); }
 @media (max-width: 680px) { .picker__cta { font-size: .62rem; margin-top: .4rem; } }
+
+/* ======================================================== VIEWFINDER ===
+   A row of square photographs where only the one in the frame lies flat.
+   Every other one is folded away on its edge: turned a quarter round and
+   tipped back in perspective, so the row reads as a thin stack either
+   side of the viewfinder.
+
+   Nothing moves per frame in JavaScript. The strip slides on a spring
+   baked into a CSS linear() easing that initViewfinder generates once;
+   the fold and the widening run on their own curve. */
+.vfc {
+  --vfc-size: 240px;
+  --vfc-folded: 78px;
+  --vfc-open: 340px;
+  --vfc-dur: 800ms;
+  /* A hair of anticipation, then a long settle. */
+  --vfc-fold-ease: cubic-bezier(1, -0.03, 0.413, 0.965);
+  position: relative;
+  display: grid; place-items: center;
+  width: 100%;
+  padding-block: clamp(2rem, 6vh, 4rem) clamp(5rem, 9vh, 6.5rem);
+  color: var(--charcoal);
+  user-select: none; -webkit-user-select: none;
+  touch-action: pan-y;
+  outline: none;
+}
+.vfc:focus-visible { box-shadow: inset 0 0 0 2px var(--champagne-dim); }
+
+.vfc__stage {
+  position: relative;
+  width: var(--vfc-open);
+  height: var(--vfc-size);
+}
+.vfc__strip { display: flex; width: max-content; will-change: transform; }
+
+/* The perspective lives on the slot, not the strip, so each photograph is
+   folded about its own centre instead of sharing one vanishing point. */
+.vfc__slot { perspective: 800px; }
+.vfc__holder {
+  position: relative; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center;
+  height: var(--vfc-size);
+  will-change: transform;
+}
+
+.vfc__photo {
+  flex-shrink: 0; display: block;
+  width: var(--vfc-size); height: var(--vfc-size);
+  margin: 0; padding: 0; border: 0; border-radius: 3px;
+  overflow: hidden; cursor: pointer;
+  background: var(--ivory-deep);
+}
+.vfc__photo:focus-visible { outline: 2px solid var(--champagne-dim); outline-offset: 4px; }
+.vfc__photo img {
+  width: 100%; height: 100%; max-width: none;
+  display: block; object-fit: cover; pointer-events: none;
+}
+
+/* The frame pulses once as a wall lands in it. */
+.vfc__frame {
+  position: absolute; inset: 0; margin: auto;
+  box-sizing: content-box;
+  width: var(--vfc-size); height: var(--vfc-size);
+  border: 2px solid var(--charcoal);
+  border-radius: 6px;
+  padding: 8px;
+  pointer-events: none;
+}
+.vfc__frame.is-land { animation: vfcPulse var(--vfc-dur) ease-in-out; }
+@keyframes vfcPulse {
+  0% { transform: scale(1); } 50% { transform: scale(1.07); } 100% { transform: scale(1); }
+}
+
+.vfc__title {
+  margin-top: clamp(1.25rem, 3vh, 2rem);
+  max-width: min(90vw, 460px);
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  line-height: 1.25;
+  color: var(--charcoal);
+}
+.vfc__title span { display: inline-block; animation: vfcIn .35s ease-out; }
+@keyframes vfcIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.vfc__controls {
+  position: absolute; left: 50%; bottom: clamp(1rem, 3vh, 2rem);
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex; align-items: center; gap: 16px;
+  padding: 4px 10px; border-radius: 999px;
+  background: rgba(255, 255, 255, .6);
+  border: 1px solid rgba(23, 23, 23, .12);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.vfc__btn {
+  display: grid; place-items: center;
+  width: 40px; height: 40px; padding: 0;
+  margin: 0; border: 0; border-radius: 999px;
+  background: none; color: var(--charcoal); cursor: pointer;
+  transition: opacity .2s, transform .2s;
+}
+.vfc__btn svg { width: 22px; height: 22px; }
+.vfc__btn:disabled { opacity: .3; cursor: default; }
+.vfc__btn:not(:disabled):active { transform: scale(.88); }
+.vfc__btn:focus-visible { outline: 2px solid var(--champagne-dim); outline-offset: 2px; }
+.vfc__count {
+  min-width: 72px; text-align: center;
+  font-size: 13px; letter-spacing: .12em;
+  font-variant-numeric: tabular-nums;
+  color: var(--taupe);
+}
+.vfc__count b { color: var(--charcoal); font-weight: 500; }
+
+@media (max-width: 760px) {
+  .vfc { --vfc-size: 180px; --vfc-folded: 56px; --vfc-open: 250px; }
+  .vfc__title { font-size: 1rem; }
+}
+@media (max-width: 400px) {
+  .vfc { --vfc-size: 150px; --vfc-folded: 46px; --vfc-open: 210px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vfc__strip, .vfc__holder { transition: none !important; }
+  .vfc__frame.is-land { animation: none; }
+  .vfc__title span { animation: none; }
+}
