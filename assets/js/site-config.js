@@ -16,18 +16,23 @@
    ========================================================================== */
 
 /* ---------------------------------------------------------------- CONTACT */
-/* The primary number is the one every call-to-action uses - header, hero,
-   floating button, project enquiries. The second is listed wherever someone
-   is deliberately looking for contact details (contact section, footer,
-   mobile menu) rather than competing with the main action. */
-const CONTACT = {
-  phoneDisplay:  '+971 56 752 2656',
-  phoneDial:     '+971567522656',
-  whatsapp:      'https://wa.me/971567522656',
+/* One number, used by every call-to-action and listed wherever someone goes
+   looking for it.
 
-  phoneDisplay2: '+971 56 718 5313',
-  phoneDial2:    '+971567185313',
-  whatsapp2:     'https://wa.me/971567185313',
+   It used to be two. Local search ties a business together by its name,
+   address and phone agreeing wherever they appear; a site carrying two
+   numbers guarantees that every directory listing disagrees with half of
+   it, which is the opposite of what a citation is for. Blanking the second
+   line removes every element carrying it sitewide - see renderContactBits -
+   so this is the only place to put one back. */
+const CONTACT = {
+  phoneDisplay:  '+971 56 718 5313',
+  phoneDial:     '+971567185313',
+  whatsapp:      'https://wa.me/971567185313',
+
+  phoneDisplay2: '',
+  phoneDial2:    '',
+  whatsapp2:     '',
 
   city:          'Dubai',
   country:       'United Arab Emirates',
