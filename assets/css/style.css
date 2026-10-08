@@ -814,26 +814,3 @@ body { background: transparent; }
 }
 .section.on-dark { isolation: isolate; overflow: hidden; }
 .section.on-dark > *:not(.silk--band) { position: relative; z-index: 1; }
-
-/* The band holds a bright photograph. White type measured 1.3:1 against the
-   cream plaster, so the type flips to the light-ground palette and sits on a
-   soft cream halo rather than a dark one. Keeping this as a modifier means a
-   dark photograph can go back in without touching anything else. */
-.reveal--bright .reveal__inner {
-  color: var(--charcoal);
-  text-shadow: 0 1px 24px rgba(245, 242, 236, .8);
-}
-.reveal--bright .reveal__inner h2 { color: var(--charcoal); }
-/* --champagne-dim measured 3.43:1 against the darkest plaster under the
-   halo. A deeper brass clears 4.5:1 without leaving the palette. Scoped
-   here so the site-wide token is untouched. */
-.reveal--bright .eyebrow--light { color: #6E5527; }
-.reveal--bright .reveal__inner::before {
-  content: ""; position: absolute; z-index: -1;
-  inset: -2.5rem -3rem;
-  background: radial-gradient(ellipse at center,
-              rgba(245, 242, 236, .90) 0%,
-              rgba(245, 242, 236, .82) 48%,
-              rgba(245, 242, 236, 0) 86%);
-  pointer-events: none;
-}
