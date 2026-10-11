@@ -2073,3 +2073,33 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   .vfc__frame.is-land { animation: none; }
   .vfc__title span { animation: none; }
 }
+
+/* ---------------------------------------------- Local guide + FAQ --- */
+.local__title {
+  font-family: var(--font-serif); font-size: clamp(1.25rem, 2vw, 1.55rem);
+  margin: 2.2rem 0 .8rem; color: var(--ink);
+}
+.local__text { color: var(--muted); line-height: 1.75; }
+.local__list { list-style: none; padding: 0; margin: 0; display: grid; gap: .55rem; }
+.local__list li { position: relative; padding-left: 1.4rem; color: var(--muted); line-height: 1.6; }
+.local__list li::before {
+  content: ""; position: absolute; left: 0; top: .72em;
+  width: 8px; height: 1px; background: var(--champagne);
+}
+
+.faq { margin-top: clamp(3.5rem, 7vw, 6rem); max-width: var(--shell-narrow); }
+.faq__list { border-top: 1px solid var(--line); }
+.faq__item { border-bottom: 1px solid var(--line); }
+.faq__item summary {
+  list-style: none; cursor: pointer; display: flex; justify-content: space-between;
+  align-items: center; gap: 1.5rem; padding: 1.4rem 0;
+  font-family: var(--font-serif); font-size: clamp(1.05rem, 1.7vw, 1.3rem); color: var(--ink);
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary::after {
+  content: "+"; flex: none; font-family: var(--font-sans); font-size: 1.5rem;
+  color: var(--champagne-dim); transition: transform var(--dur) var(--ease);
+}
+.faq__item[open] summary::after { transform: rotate(45deg); }
+.faq__item summary:focus-visible { outline: 2px solid var(--champagne); outline-offset: 4px; }
+.faq__item p { margin: 0 0 1.5rem; color: var(--muted); line-height: 1.75; max-width: 68ch; }
