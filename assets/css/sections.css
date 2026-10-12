@@ -1958,15 +1958,26 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
    baked into a CSS linear() easing that initViewfinder generates once;
    the fold and the widening run on their own curve. */
 .vfc {
-  --vfc-size: 240px;
-  --vfc-folded: 78px;
-  --vfc-open: 340px;
+  /* Sized off the viewport so the frame fills the section rather than
+     sitting in the middle of it. svh, not vh: on a phone vh changes as the
+     URL bar hides, which would resize every photograph mid-scroll and make
+     the strip jump, because the offset is measured in folded widths. */
+  --vfc-size: clamp(190px, 44svh, 460px);
+  --vfc-folded: clamp(58px, 13svh, 140px);
+  --vfc-open: clamp(260px, 62svh, 640px);
   --vfc-dur: 800ms;
   /* A hair of anticipation, then a long settle. */
   --vfc-fold-ease: cubic-bezier(1, -0.03, 0.413, 0.965);
   position: relative;
-  display: grid; place-items: center;
+  display: grid; place-items: center; align-content: center;
   width: 100%;
+  min-height: 100svh;
+  /* The folded stack is deliberately wider than the screen - that is what
+     makes it read as a stack running off both edges - so it is clipped
+     here. Without this the document itself gains a horizontal scrollbar:
+     body carries overflow-x:hidden but html does not, and that does not
+     reliably contain a child this much wider than the viewport. */
+  overflow: hidden;
   padding-block: clamp(2rem, 6vh, 4rem) clamp(5rem, 9vh, 6.5rem);
   color: var(--charcoal);
   user-select: none; -webkit-user-select: none;
@@ -2061,12 +2072,17 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
 }
 .vfc__count b { color: var(--charcoal); font-weight: 500; }
 
+/* The sizes above are driven by viewport height, so a narrow screen is
+   already handled. What a narrow screen does need is a cap on width: a
+   frame sized off a tall phone's height would otherwise be wider than the
+   phone. */
 @media (max-width: 760px) {
-  .vfc { --vfc-size: 180px; --vfc-folded: 56px; --vfc-open: 250px; }
+  .vfc {
+    --vfc-size: min(clamp(190px, 44svh, 460px), 62vw);
+    --vfc-folded: min(clamp(58px, 13svh, 140px), 17vw);
+    --vfc-open: min(clamp(260px, 62svh, 640px), 84vw);
+  }
   .vfc__title { font-size: 1rem; }
-}
-@media (max-width: 400px) {
-  .vfc { --vfc-size: 150px; --vfc-folded: 46px; --vfc-open: 210px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .vfc__strip, .vfc__holder { transition: none !important; }

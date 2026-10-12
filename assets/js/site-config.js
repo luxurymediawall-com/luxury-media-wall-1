@@ -43,6 +43,39 @@ const CONTACT = {
 const waLink = (message) =>
   CONTACT.whatsapp + (message ? '?text=' + encodeURIComponent(message) : '');
 
+/* ------------------------------------------------------------- ANALYTICS */
+/* Leave both IDs empty and nothing loads: no tag, no cookies, no requests.
+   Fill one in and tracking starts - no other change needed anywhere.
+
+   Every WhatsApp link, every phone link and the enquiry form are already
+   wired up in assets/js/analytics.js. There is nothing to add to the markup.
+
+   measurementId:   Google Analytics -> Admin -> Data streams -> your web
+                    stream -> MEASUREMENT ID.        Looks like G-XXXXXXXXXX
+
+   adsConversionId: Google Ads -> Goals -> Conversions -> Summary -> your
+                    conversion action -> Tag setup -> Install the tag
+                    yourself. The ID is in the snippet shown there.
+                    Looks like AW-XXXXXXXXX
+
+   adsLabels:       on that same Tag setup screen, each conversion action has
+                    a send_to value of the form 'AW-XXXXXXXXX/AbC-D_efGh'.
+                    The part AFTER the slash is the label - paste that here.
+                    Create one conversion action per line below, so you can
+                    tell a WhatsApp enquiry from a phone call in reporting.
+
+   A label left empty still sends the event to Google Analytics; it just
+   isn't counted as a Google Ads conversion. */
+const ANALYTICS = {
+  measurementId:   '',
+  adsConversionId: '',
+  adsLabels: {
+    whatsappClick: '',
+    phoneClick:    '',
+    enquiryForm:   ''
+  }
+};
+
 /* -------------------------------------------------------------- IMAGEKIT */
 /* Leave `urlEndpoint` empty and the site serves the local files in
    assets/img exactly as it does now. Fill it in and every image on the page

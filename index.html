@@ -1186,5 +1186,9 @@
 <script src="assets/js/signature.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/silk-gradient.js" defer></script>
+<!-- Reads ANALYTICS from site-config.js. Does nothing at all while the IDs
+     there are empty - no tag, no cookies, no request - so it is safe to ship
+     before the accounts exist. -->
+<script src="assets/js/analytics.js" defer></script>
 </body>
 </html>

@@ -2294,7 +2294,23 @@ void main() {
     const prevBtn = $('#vfcPrev');
     const nextBtn = $('#vfcNext');
 
-    const px = (name) => parseFloat(getComputedStyle(root).getPropertyValue(name)) || 0;
+    /* Resolve a CSS length that is held in a custom property.
+
+       getComputedStyle().getPropertyValue() hands back the property's text,
+       not a used value: for `--vfc-size: 240px` that parses, but the moment
+       the value becomes an expression - min(clamp(190px, 44svh, 460px),
+       62vw) - parseFloat returns NaN and every photograph collapses to zero
+       width. So the browser is asked to do the arithmetic: a hidden probe is
+       given that very property as its width, and its box is measured. */
+    const probe = document.createElement('div');
+    probe.setAttribute('aria-hidden', 'true');
+    probe.style.cssText = 'position:absolute;top:0;left:0;height:0;visibility:hidden;pointer-events:none';
+    root.appendChild(probe);
+    const px = (name) => {
+      probe.style.width = `var(${name})`;
+      const w = probe.getBoundingClientRect().width;
+      return w > 0 ? w : 0;
+    };
     const pad2 = (v) => (v < 10 ? '0' + v : String(v));
     const clampI = (i) => (i < 0 ? 0 : i > n - 1 ? n - 1 : Math.round(i));
 
@@ -2391,13 +2407,26 @@ void main() {
     root.addEventListener('pointerup', end);
     root.addEventListener('pointercancel', end);
 
-    /* The widths come from CSS custom properties, so a breakpoint change
-       has to be re-read rather than recomputed here. */
+    /* The widths come from CSS custom properties, so a change has to be
+       re-read rather than recomputed here - and height counts as much as
+       width now that the frame is sized off the viewport. Miss a height
+       change and the strip keeps offsetting by the old folded width, which
+       leaves the open photograph off centre.
+
+       The sizes use svh, which does not move when a phone's URL bar hides,
+       so this only fires on a real resize or a rotation. */
     let lw = window.innerWidth;
-    window.addEventListener('resize', () => {
-      if (Math.abs(window.innerWidth - lw) < 20) return;
+    let lh = window.innerHeight;
+    const reread = () => {
+      if (Math.abs(window.innerWidth - lw) < 20 &&
+          Math.abs(window.innerHeight - lh) < 20) return;
       lw = window.innerWidth;
+      lh = window.innerHeight;
       apply(false);
+    };
+    window.addEventListener('resize', reread);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => { lw = -1; lh = -1; reread(); }, 220);
     });
 
     apply(false);
