@@ -478,89 +478,6 @@
 
 <!-- The design process now runs as the pinned JOURNEY section above. -->
 
-<!-- ================================================ CONFIGURATOR ======= -->
-<section class="section on-dark" id="media-walls" style="background:#0d0d0d">
-  <!-- The Silk ground again, screened over this band's ink. -->
-  <canvas class="silk silk--band" id="silkConfig" aria-hidden="true"></canvas>
-  <div class="shell">
-    <div class="section-head section-head--split">
-      <div>
-        <p class="eyebrow" data-reveal>Interactive</p>
-        <h2 class="h1 mt-6 reveal-words" data-reveal="fade">Your wall. Your design.</h2>
-      </div>
-      <div class="section-head__aside">
-        <p class="lede" data-reveal>
-          Turn the lighting on and off and add the elements you want.
-          A rough sketch of your wall, built in the browser.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Showcase film across the full width of the section. main.js attaches
-       the source as it nears the viewport and plays it muted on a loop. -->
-  <div class="cfg-film" data-reveal>
-    <video id="cfgFilm" data-src="assets/video/showcase-film.mp4"
-           muted loop playsinline preload="none"
-           poster="assets/img/showcase-film-poster.jpg"
-           aria-label="Film of media wall materials - marble, timber and stone samples"></video>
-  </div>
-
-  <!-- Full-bleed photograph, edge to edge. The readout still names the
-       closest completed build for the features switched on below. -->
-      <div class="cfg__stage" id="cfgStage" data-reveal="scale">
-        <img class="cfg__photo" id="cfgPhoto"
-             src="assets/img/cfg-beige-marble-1400.jpg"
-             srcset="assets/img/cfg-beige-marble-900.jpg 900w, assets/img/cfg-beige-marble-1400.jpg 1400w, assets/img/cfg-beige-marble-2000.jpg 2000w, assets/img/cfg-beige-marble-2600.jpg 2600w"
-             sizes="100vw" width="2600" height="1451" loading="lazy" decoding="async"
-             alt="Beige marble media wall with a recessed LED line, wall-mounted television and walnut cabinet">
-        <div class="cfg__scrim" aria-hidden="true"></div>
-
-        <div class="cfg__readout" id="cfgReadout" role="status" aria-live="polite">
-          <span class="cfg__readout-label">Closest build in our portfolio</span>
-          <h3 class="cfg__readout-title" id="cfgMatchTitle">Modern Marble Media Wall</h3>
-          <p class="cfg__readout-spec" id="cfgMatchSpec"></p>
-          <button class="cfg__readout-cta" id="cfgMatchOpen" type="button">
-            View the full specification
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </button>
-        </div>
-
-      </div>
-
-  <div class="shell">
-
-    <div class="cfg">
-      <div class="cfg__panel">
-        <div class="cfg__group">
-          <h4>Features</h4>
-          <div class="toggles">
-            <button class="toggle" type="button" data-toggle="led" aria-pressed="true">
-              <span>LED Lighting</span><span class="toggle__box"></span>
-            </button>
-            <button class="toggle" type="button" data-toggle="cabinet" aria-pressed="true">
-              <span>Floating Cabinet</span><span class="toggle__box"></span>
-            </button>
-            <button class="toggle" type="button" data-toggle="tall" aria-pressed="true">
-              <span>Tall Storage</span><span class="toggle__box"></span>
-            </button>
-            <button class="toggle" type="button" data-toggle="fire" aria-pressed="false">
-              <span>Fireplace</span><span class="toggle__box"></span>
-            </button>
-            <button class="toggle" type="button" data-toggle="shelves" aria-pressed="false">
-              <span>Open Shelving</span><span class="toggle__box"></span>
-            </button>
-          </div>
-        </div>
-
-        <a class="btn btn--gold btn--wide" data-wa="Hello Luxury Media Wall, I have been using the wall configurator on your website and would like a quote for my design." href="https://wa.me/971567185313" target="_blank" rel="noopener">
-          <span>Send My Design</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- =================================================== MATERIALS ======= -->
 <section class="section bg-white">
   <div class="shell">
@@ -602,8 +519,12 @@
   </div>
 </section>
 
-<!-- ============================================= DETAIL GALLERY ======= -->
-<section class="section">
+<!-- ================================================= WALL TYPES ======= -->
+<!-- Carries id="media-walls" since the configurator that used to hold it
+     was removed. The nav and the drawer both point at "Media Walls", and
+     eight kinds of media wall is a more honest answer to that than a
+     sketching tool was. -->
+<section class="section" id="media-walls">
   <div class="shell">
     <div class="section-head section-head--split">
       <div>
