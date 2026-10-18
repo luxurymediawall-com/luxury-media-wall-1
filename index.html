@@ -221,40 +221,14 @@
   </div>
 </div>
 
-<!-- ===================================================== DESIGNS ======= -->
-<!-- Replaces the drifting photo corridor that used to sit here. That band
-     was decorative only - aria-hidden, no titles, nothing to do - so the
-     same photographs now carry their name and open when you pick one.
-     One panel per entry in PROJECTS, dealt by main.js, so this row and the
-     project modal can never disagree about what has been built. -->
-<section class="section picker" id="designs">
-  <div class="shell">
-    <div class="section-head section-head--split">
-      <div>
-        <p class="eyebrow" data-reveal>Every Wall We Have Built</p>
-        <h2 class="h1 mt-6 reveal-words" data-reveal="fade">Nineteen designs</h2>
-      </div>
-      <div class="section-head__aside">
-        <p class="lede" data-reveal>
-          Every completed wall, end to end. Pick one to open it; drag the row
-          sideways for the rest.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <div class="picker__row" id="finishRow" role="group"
-       aria-label="Completed wall designs - choose one to open it"
-       data-reveal>
-    <!-- rendered from FINISHES in site-config.js -->
-  </div>
-</section>
-
-<!-- ==================================================== VIEWFINDER ==== -->
-<!-- Replaces the liquid-glass WebGL row that used to sit here. Same
-     nineteen projects, no shader: only the wall in the frame lies flat and
-     the rest are folded away on their edge. -->
-<section class="section vfc-band">
+<!-- ==================================================== PROJECTS ====== -->
+<!-- The only projects gallery on the page, and it carries id="projects"
+     because the nav, the drawer, two buttons and the footer all point at
+     that. A picker row and a coverflow carousel used to show these same
+     nineteen walls as well; three galleries of one set of photographs is
+     padding, not depth. Only the wall in the frame lies flat, the rest
+     fold away on their edge. -->
+<section class="section vfc-band" id="projects">
   <div class="shell">
     <div class="section-head section-head--split">
       <div>
@@ -357,41 +331,6 @@
           <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================== FEATURED ======= -->
-<!-- Coverflow carousel. Cards are dealt from PROJECTS by main.js; the centre
-     card opens the same project modal the grid below uses, so there is one
-     source of project detail rather than two. -->
-<!-- Carries id="projects": this is now the only projects section, so the
-     nav, the hero button, the footer and the sitemap all still resolve. -->
-<section class="section coverflow" id="projects">
-  <div class="shell">
-    <div class="section-head">
-      <p class="eyebrow eyebrow--center text-center" data-reveal>Selected Work</p>
-      <h2 class="h1 text-center reveal-words" data-reveal="fade">Our media wall projects</h2>
-      <p class="lede text-center coverflow__lede" data-reveal>
-        Nine completed walls, nine different material stories. Drag or tap through them,
-        then open any one for the full specification — stone, joinery, lighting and the
-        details you cannot photograph.
-      </p>
-    </div>
-
-    <div class="coverflow__stage" id="coverflowStage" role="group"
-         aria-roledescription="carousel" aria-label="Featured media wall projects">
-      <!-- rendered from PROJECTS in site-config.js -->
-    </div>
-
-    <div class="coverflow__controls">
-      <button type="button" class="coverflow__arrow" id="coverflowPrev" aria-label="Previous project">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-      <div class="coverflow__dots" id="coverflowDots"></div>
-      <button type="button" class="coverflow__arrow" id="coverflowNext" aria-label="Next project">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-      </button>
     </div>
   </div>
 </section>
