@@ -632,10 +632,10 @@ const ENTRANCES = [
   {
     img: 'assets/img/entry-blossom-mirror',
     title: 'Backlit Curved Mirror',
-    text: 'A full-height mirror cut in a soft wave and lit from behind, so the glow lands on the plaster rather than on the glass. A blossom branch breaks across the top corner, and a woven bench and round rug keep the floor light underneath.',
-    spec: 'Shaped mirror · concealed warm LED · lime plaster · woven bench',
-    best: 'A wide entrance where the mirror is the only furniture',
-    alt: 'Curved full-height mirror with an LED halo and blossom branches in a hallway'
+    text: 'A full-height mirror cut in a soft wave and lit from behind, so the glow lands on the plaster rather than on the glass. A blossom tree arcs over the top of it, and a slim fluted console keeps the opposite wall almost empty.',
+    spec: 'Shaped mirror · concealed warm LED · fluted console · brass base',
+    best: 'A wide entrance where the mirror is the only thing on the wall',
+    alt: 'Curved full-height mirror lit from behind, a blossom tree arcing over it and a slim fluted console opposite'
   },
   {
     img: 'assets/img/entry-lit-mirror-wardrobe',
