@@ -1977,12 +1977,12 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
      sitting in the middle of it. svh, not vh: on a phone vh changes as the
      URL bar hides, which would resize every photograph mid-scroll and make
      the strip jump, because the offset is measured in folded widths. */
-  --vfc-size: clamp(190px, 44svh, 460px);
-  --vfc-folded: clamp(58px, 13svh, 140px);
-  --vfc-open: clamp(260px, 62svh, 640px);
+  --vfc-size: clamp(220px, 56svh, 620px);
+  /* Space between photographs, measured along the arc. Kept generous: a flat
+     card on a curved surface leans toward the lens at its near edge, so the
+     clearance on screen is smaller than the gap suggests. */
+  --vfc-gap: clamp(22px, 4.5svh, 52px);
   --vfc-dur: 800ms;
-  /* A hair of anticipation, then a long settle. */
-  --vfc-fold-ease: cubic-bezier(1, -0.03, 0.413, 0.965);
   position: relative;
   display: grid; place-items: center; align-content: center;
   width: 100%;
@@ -2001,21 +2001,47 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
 }
 .vfc:focus-visible { box-shadow: inset 0 0 0 2px var(--champagne-dim); }
 
+/* The walls sit on the inside of a cylinder rather than folding flat on
+   their edge. The one in the frame faces you square on; its neighbours turn
+   away round the arc, and the ends fade out. One vanishing point is shared
+   by the whole row - it lives here, on the stage - so the row reads as a
+   single curved surface instead of each photograph folding about its own
+   centre. `perspective` itself is set by main.js, because it has to track
+   the radius, which is measured from the stage's width. */
 .vfc__stage {
   position: relative;
-  width: var(--vfc-open);
+  width: 100%;
   height: var(--vfc-size);
+  perspective-origin: 50% 50%;
+  /* No mask here, deliberately. A mask-image across the ends is the obvious
+     way to fade them out, and it is what the component does - but a mask
+     flattens the subtree it covers, and this subtree is preserve-3d. In
+     Chromium the walls simply stop painting: every photograph turns into
+     its empty holder. The fade is done per wall instead, by how far round
+     the arc it has gone - see apply() in main.js - which is also truer to
+     the ends receding than fading against a fixed screen position. */
 }
-.vfc__strip { display: flex; width: max-content; will-change: transform; }
+.vfc__strip {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+}
 
-/* The perspective lives on the slot, not the strip, so each photograph is
-   folded about its own centre instead of sharing one vanishing point. */
-.vfc__slot { perspective: 800px; }
-.vfc__holder {
-  position: relative; flex-shrink: 0;
-  display: flex; flex-direction: column; align-items: center;
-  height: var(--vfc-size);
+/* Each slot is pinned to the stage's centre and carried round the arc by
+   one rotateY - out to the axis, round it, back in. preserve-3d is what
+   keeps the photograph on the cylinder instead of flattening against it. */
+.vfc__slot {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: var(--vfc-size); height: var(--vfc-size);
+  margin-left: calc(var(--vfc-size) / -2);
+  margin-top: calc(var(--vfc-size) / -2);
+  transform-style: preserve-3d;
   will-change: transform;
+}
+.vfc__holder {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%; height: 100%;
 }
 
 .vfc__photo {
@@ -2093,14 +2119,13 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
    phone. */
 @media (max-width: 760px) {
   .vfc {
-    --vfc-size: min(clamp(190px, 44svh, 460px), 62vw);
-    --vfc-folded: min(clamp(58px, 13svh, 140px), 17vw);
-    --vfc-open: min(clamp(260px, 62svh, 640px), 84vw);
+    --vfc-size: min(clamp(220px, 56svh, 620px), 78vw);
+    --vfc-gap: min(clamp(22px, 4.5svh, 52px), 7vw);
   }
   .vfc__title { font-size: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .vfc__strip, .vfc__holder { transition: none !important; }
+  .vfc__slot { transition: none !important; }
   .vfc__frame.is-land { animation: none; }
   .vfc__title span { animation: none; }
 }

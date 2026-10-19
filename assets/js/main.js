@@ -2231,8 +2231,32 @@ void main() {
 
     const items = PROJECTS;
     const n = items.length;
-    const TILT = 60;   /* degrees tipped back */
-    const ROLL = 90;   /* degrees turned on its side */
+    /* ---- the arc -------------------------------------------------------
+       Ported from the tilted-grid component. The row is laid on the inside
+       of a cylinder: the wall in the frame faces you flat, its neighbours
+       turn away round the arc, and the ends fade out.
+
+       CAMERA is how far the lens sits from the screen as a multiple of the
+       radius. Just past the axis, so the near ends swell as they come
+       toward it; much further back and the row flattens out however tight
+       the cylinder.
+
+       The component sizes its cylinder off the frame's width. That works
+       for a band whose tiles are always a small share of it, but here the
+       photograph is a fixed, deliberately large object - 44svh, and 62vw on
+       a phone - so pulling the radius off the width made the curve depend
+       on the window: 42 degrees between walls on a narrow pane, where
+       neighbours went edge-on exactly as the old fold did, and 14 on a wide
+       one, where the arc flattened into a plain row.
+
+       So the radius is pulled off the photograph instead. PITCH is the
+       angle from one wall to the next, fixed, which makes the curve the
+       same shape on a phone and an ultrawide; only how many walls fit
+       either side changes. 34 turns a neighbour far enough to read as an
+       arc while leaving it plainly a photograph. */
+    const CAMERA = 1.4;
+    const PITCH = 34;    /* degrees from one wall to the next */
+    const LIMIT = 76;    /* past this a wall is off the arc, so it is dropped */
     const DUR = 0.8;   /* seconds */
     const BOUNCE = 0.2;
 
@@ -2271,20 +2295,25 @@ void main() {
       ? springEasing(BOUNCE, DUR)
       : { easing: 'cubic-bezier(.22, 1, .36, 1)', ms: Math.round(DUR * 1000) };
 
-    const foldEase = `${DUR * 1000}ms var(--vfc-fold-ease)`;
-
+    /* The full srcset ladder, not the card one. The wall in the frame is the
+       largest photograph on the page - up to 620px square, and twice that in
+       device pixels on a retina screen - so it needs the 1400 to stay sharp.
+       The sizes attribute has to track --vfc-size exactly: it was a hardcoded
+       340px, which held every tile to the 900 however big the frame grew. */
     strip.innerHTML = items.map((p, i) => `
       <div class="vfc__slot">
         <div class="vfc__holder">
           <button type="button" class="vfc__photo" data-i="${i}"
                   aria-label="${esc(p.title)}, ${i + 1} of ${n}" tabindex="-1">
-            <img src="${asset(p.img + '-480.jpg')}" srcset="${srcsetCard(p.img)}"
-                 sizes="340px" alt="${esc(p.alt)}" draggable="false"
+            <img src="${asset(p.img + '-480.jpg')}" srcset="${srcset(p.img)}"
+                 sizes="(max-width: 760px) min(78vw, 620px), min(56svh, 620px)"
+                 alt="${esc(p.alt)}" draggable="false"
                  loading="lazy" decoding="async">
           </button>
         </div>
       </div>`).join('');
 
+    const stage = $('.vfc__stage', root);
     const slots = $$('.vfc__slot', strip);
     const holders = $$('.vfc__holder', strip);
     const photos = $$('.vfc__photo', strip);
@@ -2317,21 +2346,52 @@ void main() {
     let active = 0;
     let movingUntil = 0;
 
-    strip.style.transition = `transform ${spring.ms}ms ${spring.easing}`;
-    holders.forEach((h) => { h.style.transition = `width ${foldEase}, transform ${foldEase}`; });
+    /* The strip no longer travels - each wall rides the arc on its own, so
+       the spring belongs to the slot. */
+    slots.forEach((s) => {
+      s.style.transition =
+        `transform ${spring.ms}ms ${spring.easing}, opacity ${spring.ms}ms linear`;
+    });
 
     function apply(land) {
-      const folded = px('--vfc-folded');
-      const open = px('--vfc-open');
-      /* Everything before the open one is folded, so the strip moves by
-         folded widths rather than by whole photographs. */
-      strip.style.transform = `translateX(${-(folded * active)}px)`;
+      /* Lay the row on the cylinder. One photograph plus its gap has to
+         span PITCH degrees of arc, which fixes the radius. */
+      const size = px('--vfc-size');
+      const gap = px('--vfc-gap');
+      const pitch = PITCH;
+      const radius = Math.max(1, (size + gap) / ((pitch * Math.PI) / 180));
+      const limit = LIMIT;
+
+      /* The vanishing point sits just past the axis, so the near ends swell
+         as they come toward the lens instead of the row flattening out. */
+      stage.style.perspective = (radius * CAMERA).toFixed(2) + 'px';
 
       for (let i = 0; i < n; i++) {
-        const side = i < active ? 1 : i > active ? -1 : 0;
-        holders[i].style.width = (i === active ? open : folded) + 'px';
-        holders[i].style.transform = `rotateY(${side * TILT}deg) rotateZ(${side * ROLL}deg)`;
-        slots[i].style.zIndex = String(n - Math.abs(active - i));
+        /* Negated so the walls still to come sit to the right, the way the
+           strip used to run and the way the next/prev arrows read. */
+        const angle = -(i - active) * pitch;
+        const off = Math.abs(angle);
+        /* Out to the axis, round it, and back in: the photograph ends up on
+           the cylinder's surface at this angle, still facing outward. */
+        slots[i].style.transform =
+          `translateZ(${radius.toFixed(2)}px) rotateY(${angle.toFixed(3)}deg) ` +
+          `translateZ(${(-radius).toFixed(2)}px)`;
+        slots[i].style.visibility = off > limit ? 'hidden' : 'visible';
+        /* Fades with distance round the arc, so the row recedes into the
+           page rather than stopping at a hard edge. */
+        slots[i].style.opacity =
+          off > limit ? '0' : (1 - Math.pow(off / limit, 2.2)).toFixed(3);
+
+        /* Lazy loading keys off the intersection of a box the browser has
+           already laid out, and these boxes are flung round a cylinder: a
+           wall could swing into the frame still blank, showing the holder's
+           bare fill. So anything within a step of the arc is promoted to an
+           eager load, which starts the fetch while it is still off to the
+           side. Everything further out stays lazy. */
+        const im = photos[i].querySelector('img');
+        if (im && im.loading === 'lazy' && off <= limit + pitch) im.loading = 'eager';
+        /* Nearest the frame paints last. */
+        slots[i].style.zIndex = String(10000 - Math.round(off * 10));
         photos[i].tabIndex = i === active ? 0 : -1;
         if (i === active) photos[i].setAttribute('aria-current', 'true');
         else photos[i].removeAttribute('aria-current');
