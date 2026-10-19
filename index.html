@@ -67,12 +67,22 @@
 {
   "@context": "https://schema.org",
   "@type": "HomeAndConstructionBusiness",
+  "@id": "https://luxurymediawall.com/#business",
   "name": "Luxury Media Wall",
   "description": "Bespoke media walls, luxury TV walls, floating TV units, marble and wood feature walls and custom joinery in Dubai, UAE.",
   "image": "https://ik.imagekit.io/ojutq4xhq/media-wall/hero-poster.jpg?tr=w-1200,q-auto",
   "url": "https://luxurymediawall.com/",
   "telephone": "+971567185313",
+  "email": "hello@luxurymediawall.com",
   "priceRange": "$$$",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "sales",
+    "telephone": "+971567185313",
+    "email": "hello@luxurymediawall.com",
+    "areaServed": "AE",
+    "availableLanguage": "English"
+  },
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Dubai",
@@ -89,14 +99,21 @@
     "opens": "09:00",
     "closes": "19:00"
   },
-  "makesOffer": [
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom Media Walls" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "TV Wall Units" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Marble and Stone Feature Walls" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Wood and Fluted Panelling" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Integrated LED Lighting" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom Storage and Joinery" } }
-  ]
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Interior fit-out services",
+    "itemListElement": [
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Bespoke Media Walls" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Floating TV Units" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Kitchen Renovations" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Bathroom Renovations" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Wardrobes" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Marble & Stone Walls" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Wood & Fluted Panels" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Full-Height Joinery" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Integrated LED Lighting" } }
+    ]
+  }
 }
 </script>
 </head>
@@ -560,8 +577,11 @@
 <!-- ======================================== LOCAL GUIDE + FAQ ======= -->
 <!-- Plain, crawlable text for the searches people actually type
      ("media wall Dubai", "TV wall unit Abu Dhabi", "media wall cost").
-     The FAQ answers are mirrored in the FAQPage schema at the end of
-     this section, so keep the two in step when editing. -->
+     The FAQ below is the short version. The full set of questions, and the
+     FAQPage structured data for all of them, lives on /faq/ so that one URL
+     owns it - two pages carrying the same FAQPage block compete with each
+     other. Add a question there first, then mirror it here if it belongs in
+     the short list. -->
 <section class="section bg-white" id="media-wall-dubai">
   <div class="shell intro">
     <div>
@@ -646,28 +666,12 @@
           shelving and cable management as well. We build both.</p>
       </details>
     </div>
+
+    <p class="text-center mt-10">
+      <a class="link-underline" href="/faq/">Read all questions</a>
+    </p>
   </div>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      { "@type": "Question", "name": "How much does a media wall cost in Dubai?",
-        "acceptedAnswer": { "@type": "Answer", "text": "It depends on the wall size, the material and how much storage and lighting the wall includes. Fluted panelling and lacquer cost less than book-matched marble or backlit onyx. Send us your wall width, height and a photo on WhatsApp and we will reply with an estimate the same day." } },
-      { "@type": "Question", "name": "How long does it take to build and install?",
-        "acceptedAnswer": { "@type": "Answer", "text": "After the site survey and drawing approval, fabrication in our workshop usually takes two to three weeks. Installation on site is normally one to two days, including TV mounting and cable work." } },
-      { "@type": "Question", "name": "Do you install media walls in Abu Dhabi and Sharjah?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. We are based in Dubai and install across Dubai, Abu Dhabi and Sharjah. The site survey is free in all three." } },
-      { "@type": "Question", "name": "Can you hide all the cables and wiring?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Power, HDMI and network runs go inside the wall structure, and the devices sit in ventilated closed storage. Nothing is visible once the wall is finished." } },
-      { "@type": "Question", "name": "Can I see the materials before I decide?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. We bring physical samples of the marble, timber and finishes to your home during the consultation, so you can see them in your own light." } },
-      { "@type": "Question", "name": "What is the difference between a media wall and a TV feature wall?",
-        "acceptedAnswer": { "@type": "Answer", "text": "People often use the names for the same thing. A TV feature wall is mainly the decorative cladding around the screen. A media wall usually adds built-in storage, shelving and cable management as well. We build both." } }
-    ]
-  }
-  </script>
 </section>
 
 <!-- ======================================================= VIDEO ======= -->
