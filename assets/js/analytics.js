@@ -29,19 +29,27 @@
   var LABELS = CFG.adsLabels || {};
 
   /* ------------------------------------------------------------ gtag boot */
-  window.dataLayer = window.dataLayer || [];
-  function gtag() { window.dataLayer.push(arguments); }
-  window.gtag = gtag;
+  /* The pages carry the Google tag in <head>, which loads and configures it
+     before this deferred file runs. Booting it a second time would send a
+     second page_view for every visit, so only boot when that tag is absent. */
+  var gtag;
+  if (typeof window.gtag === 'function') {
+    gtag = window.gtag;
+  } else {
+    window.dataLayer = window.dataLayer || [];
+    gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag = gtag;
 
-  gtag('js', new Date());
-  if (GA)  gtag('config', GA);
-  if (ADS) gtag('config', ADS);
+    gtag('js', new Date());
+    if (GA)  gtag('config', GA);
+    if (ADS) gtag('config', ADS);
 
-  var tag = document.createElement('script');
-  tag.async = true;
-  tag.src = 'https://www.googletagmanager.com/gtag/js?id=' +
-            encodeURIComponent(GA || ADS);
-  document.head.appendChild(tag);
+    var tag = document.createElement('script');
+    tag.async = true;
+    tag.src = 'https://www.googletagmanager.com/gtag/js?id=' +
+              encodeURIComponent(GA || ADS);
+    document.head.appendChild(tag);
+  }
 
   /* --------------------------------------------------------------- record */
   /* Sends one GA4 event, and a Google Ads conversion when a label exists.

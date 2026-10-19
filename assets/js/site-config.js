@@ -67,8 +67,8 @@ const waLink = (message) =>
    A label left empty still sends the event to Google Analytics; it just
    isn't counted as a Google Ads conversion. */
 const ANALYTICS = {
-  measurementId:   '',
-  adsConversionId: '',
+  measurementId:   'G-X50L5FXLE8',
+  adsConversionId: 'AW-18400415095',
   adsLabels: {
     whatsappClick: '',
     phoneClick:    '',
