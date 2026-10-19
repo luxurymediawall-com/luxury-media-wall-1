@@ -7,6 +7,10 @@
      Phone click     - any element carrying data-phone-link, or any tel: link
      Enquiry form    - the #enquiryForm submit
 
+   Each one goes to Google (Analytics and Ads) and, when a Meta pixel ID is
+   set, to Meta as a standard event: Contact for WhatsApp and phone, Lead
+   for the form, so Facebook and Instagram ads can optimise for them.
+
    Nothing here runs until ANALYTICS in site-config.js carries an ID. With
    both IDs empty the file loads, finds no configuration and returns: no tag,
    no cookies, no network request, nothing for a visitor to consent to.
@@ -22,9 +26,10 @@
   var CFG = (typeof ANALYTICS === 'object' && ANALYTICS) ? ANALYTICS : {};
   var GA  = String(CFG.measurementId   || '').trim();
   var ADS = String(CFG.adsConversionId || '').trim();
+  var PIX = String(CFG.metaPixelId     || '').trim();
 
   /* Not configured yet. Stay completely silent. */
-  if (!GA && !ADS) return;
+  if (!GA && !ADS && !PIX) return;
 
   var LABELS = CFG.adsLabels || {};
 
@@ -51,11 +56,34 @@
     document.head.appendChild(tag);
   }
 
+  /* ----------------------------------------------------------- meta boot */
+  /* Meta's standard base code, unminified: fbq queues calls until
+     fbevents.js arrives and replays them. */
+  if (PIX && typeof window.fbq !== 'function') {
+    var fbq = window.fbq = function () {
+      fbq.callMethod ? fbq.callMethod.apply(fbq, arguments)
+                     : fbq.queue.push(arguments);
+    };
+    if (!window._fbq) window._fbq = fbq;
+    fbq.push = fbq;
+    fbq.loaded = true;
+    fbq.version = '2.0';
+    fbq.queue = [];
+
+    var px = document.createElement('script');
+    px.async = true;
+    px.src = 'https://connect.facebook.net/en_US/fbevents.js';
+    document.head.appendChild(px);
+
+    fbq('init', PIX);
+    fbq('track', 'PageView');
+  }
+
   /* --------------------------------------------------------------- record */
   /* Sends one GA4 event, and a Google Ads conversion when a label exists.
      A tel: link navigates away on a phone, so the beacon transport is used
      to make sure the request survives the page leaving. */
-  function record(eventName, labelKey, params) {
+  function record(eventName, labelKey, params, metaEvent) {
     var payload = params || {};
     payload.transport_type = 'beacon';
 
@@ -68,6 +96,12 @@
           send_to: ADS + '/' + label,
           transport_type: 'beacon'
         });
+      } catch (e) {}
+    }
+
+    if (PIX && metaEvent && typeof window.fbq === 'function') {
+      try {
+        window.fbq('track', metaEvent, { content_name: eventName });
       } catch (e) {}
     }
   }
@@ -95,7 +129,7 @@
       record('whatsapp_click', 'whatsappClick', {
         event_category: 'enquiry',
         event_label: placeOf(wa)
-      });
+      }, 'Contact');
       return;
     }
 
@@ -104,7 +138,7 @@
       record('phone_click', 'phoneClick', {
         event_category: 'enquiry',
         event_label: placeOf(phone)
-      });
+      }, 'Contact');
     }
   }, true);
 
@@ -116,7 +150,7 @@
     if (!form || form.nodeType !== 1) return;
 
     if (form.id === 'enquiryForm') {
-      record('enquiry_form_submit', 'enquiryForm', { event_category: 'enquiry' });
+      record('enquiry_form_submit', 'enquiryForm', { event_category: 'enquiry' }, 'Lead');
     } else if (form.id === 'reviewForm') {
       record('review_submit', null, { event_category: 'engagement' });
     }

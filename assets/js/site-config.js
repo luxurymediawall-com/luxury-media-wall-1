@@ -65,10 +65,14 @@ const waLink = (message) =>
                     tell a WhatsApp enquiry from a phone call in reporting.
 
    A label left empty still sends the event to Google Analytics; it just
-   isn't counted as a Google Ads conversion. */
+   isn't counted as a Google Ads conversion.
+
+   metaPixelId:     Meta Events Manager -> Datasets -> your pixel. The
+                    number shown under its name. */
 const ANALYTICS = {
   measurementId:   'G-X50L5FXLE8',
   adsConversionId: 'AW-18400415095',
+  metaPixelId:     '1425696606360438',
   adsLabels: {
     whatsappClick: '',
     phoneClick:    '',
