@@ -74,9 +74,11 @@ const ANALYTICS = {
   adsConversionId: 'AW-18400415095',
   metaPixelId:     '1425696606360438',
   adsLabels: {
-    whatsappClick: '',
-    phoneClick:    '',
-    enquiryForm:   ''
+    /* One 'Contact' conversion action covers all three enquiry routes for
+       now. Give each its own label later to compare them in Google Ads. */
+    whatsappClick: 'kHtSCIGPo6MdEPeagMZE',
+    phoneClick:    'kHtSCIGPo6MdEPeagMZE',
+    enquiryForm:   'kHtSCIGPo6MdEPeagMZE'
   }
 };
 
