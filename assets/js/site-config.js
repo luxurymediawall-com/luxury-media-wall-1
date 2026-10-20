@@ -74,9 +74,9 @@ const ANALYTICS = {
   adsConversionId: 'AW-18400415095',
   metaPixelId:     '1425696606360438',
   adsLabels: {
-    /* One 'Contact' conversion action covers all three enquiry routes for
-       now. Give each its own label later to compare them in Google Ads. */
-    whatsappClick: 'kHtSCIGPo6MdEPeagMZE',
+    /* WhatsApp reports to the 'Contact' conversion action; phone and form
+       share 'Contact (1)', so WhatsApp can be compared with the rest. */
+    whatsappClick: 'AADECIO1zqIdEPeagMZE',
     phoneClick:    'kHtSCIGPo6MdEPeagMZE',
     enquiryForm:   'kHtSCIGPo6MdEPeagMZE'
   }
