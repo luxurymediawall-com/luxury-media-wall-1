@@ -1,0 +1,82 @@
+/* ==========================================================================
+   SERVICE PAGES - /tv-wall-dubai/, /custom-tv-wall-units/, /ar/
+   --------------------------------------------------------------------------
+   Static, like /faq/: no main.js, so nothing waits on the .js class. These
+   pages exist to rank for one search each and to turn that visit into a
+   WhatsApp message, so they stay text-first and fast.
+   ========================================================================== */
+
+.svc { padding-block: clamp(6rem, 12vh, 9rem) clamp(4rem, 8vh, 6rem); }
+.svc__head { max-width: 48rem; }
+.svc__intro { margin-top: 1.5rem; }
+
+.svc__back {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-size: .74rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted);
+}
+.svc__back:hover { color: var(--charcoal); }
+
+.svc__actions { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 1rem; }
+
+.svc__section { margin-top: clamp(3.5rem, 7vh, 5rem); max-width: 52rem; }
+.svc__section h2 { font-size: clamp(1.45rem, 2.6vw, 2rem); }
+.svc__section > p { margin-top: 1rem; color: var(--muted); line-height: 1.75; }
+
+.svc__grid {
+  margin-top: 1.75rem;
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+.svc__card { border: 1px solid var(--line); padding: 1.5rem; }
+.svc__card h3 { font-size: 1.05rem; }
+.svc__card p { margin-top: .6rem; color: var(--muted); font-size: .95rem; line-height: 1.65; }
+
+.svc__steps { margin-top: 1.5rem; padding: 0; list-style: none; counter-reset: step; }
+.svc__steps li {
+  counter-increment: step;
+  display: grid; grid-template-columns: 2.5rem 1fr; gap: .25rem 1rem;
+  padding-block: 1rem; border-top: 1px solid var(--line);
+}
+.svc__steps li::before {
+  content: counter(step, decimal-leading-zero);
+  grid-row: span 2;
+  font-size: .8rem; letter-spacing: .12em; color: var(--champagne-dim);
+}
+.svc__steps strong { font-weight: 500; }
+.svc__steps span { color: var(--muted); font-size: .95rem; }
+
+.svc__areas { margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; list-style: none; }
+.svc__areas li { border: 1px solid var(--line); padding: .4rem .8rem; font-size: .85rem; color: var(--muted); }
+
+.svc__qa { margin-top: 1.25rem; }
+.svc__qa h3 { font-size: 1.05rem; margin-top: 1.5rem; }
+.svc__qa p { margin-top: .5rem; color: var(--muted); line-height: 1.7; }
+
+.svc__cta {
+  margin-top: clamp(3.5rem, 7vh, 5rem);
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  border: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: 1.25rem;
+  align-items: center; justify-content: space-between;
+}
+.svc__cta p { max-width: 34rem; color: var(--muted); }
+.svc__cta h2 { font-size: clamp(1.3rem, 2.4vw, 1.75rem); }
+
+.svc__nav {
+  border-top: 1px solid var(--line);
+  margin-top: clamp(3rem, 6vh, 4.5rem); padding-top: 1.75rem;
+  display: flex; flex-wrap: wrap; gap: 1.25rem 2rem;
+  font-size: .8rem;
+}
+.svc__nav a { color: var(--muted); }
+.svc__nav a:hover { color: var(--charcoal); }
+
+/* Arabic page. Jost and Bodoni have no Arabic glyphs, so the page swaps to
+   a Kufi face and drops the letter-spacing that breaks joined script. */
+[dir="rtl"] body,
+[dir="rtl"] .h1, [dir="rtl"] h2, [dir="rtl"] h3 {
+  font-family: "Noto Kufi Arabic", system-ui, sans-serif;
+}
+[dir="rtl"] .eyebrow, [dir="rtl"] .svc__back { letter-spacing: 0; }
+[dir="rtl"] .svc__back svg { transform: scaleX(-1); }
