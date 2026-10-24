@@ -2188,3 +2188,15 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   .installs__item:nth-child(3) { grid-column: 1 / span 3; }
   .installs__item:nth-child(4) { grid-column: 4 / span 3; }
 }
+
+/* A vertical Short beside a line of text; stacked on phones. */
+.installs__video {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  display: grid; gap: clamp(1.25rem, 3vw, 2.5rem); align-items: center;
+  grid-template-columns: minmax(0, 340px) 1fr;
+}
+.installs__video iframe { width: 100%; aspect-ratio: 9 / 16; border: 0; display: block; background: var(--ink); }
+@media (max-width: 699px) {
+  .installs__video { grid-template-columns: 1fr; }
+  .installs__video iframe { max-width: 340px; }
+}
