@@ -1,0 +1,79 @@
+/* ==========================================================================
+   DESIGN PICKER - /designs/
+   --------------------------------------------------------------------------
+   One link for customers: every design on the site as a card with its
+   details and a WhatsApp button. Built by tools/build-designs.js, static
+   like the service pages, so it sits on top of service.css.
+   ========================================================================== */
+
+.dz .svc__head { max-width: 52rem; }
+
+.dz__filters {
+  margin-top: 2rem;
+  display: flex; flex-wrap: wrap; gap: .5rem;
+}
+.dz__chip {
+  border: 1px solid var(--line); background: transparent; color: var(--charcoal);
+  padding: .5rem .95rem; font: inherit; font-size: .82rem; cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.dz__chip:hover { border-color: var(--charcoal); }
+.dz__chip.is-on { background: var(--ink); border-color: var(--ink); color: var(--ivory); }
+
+.dz__count { margin-top: 1rem; font-size: .82rem; color: var(--muted); }
+
+.dz__section { margin-top: clamp(2.5rem, 5vh, 3.5rem); }
+.dz__section[hidden], .dz__card[hidden] { display: none; }
+.dz__section > h2 { font-size: clamp(1.4rem, 2.6vw, 1.9rem); }
+.dz__section > p { margin-top: .5rem; color: var(--muted); }
+
+.dz__grid {
+  margin-top: 1.5rem;
+  display: grid; gap: clamp(1rem, 2vw, 1.5rem);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+}
+
+.dz__card {
+  border: 1px solid var(--line); background: var(--white, #fff);
+  display: flex; flex-direction: column;
+  scroll-margin-top: 1.5rem;
+}
+.dz__card:target { outline: 2px solid var(--champagne); outline-offset: 2px; }
+
+.dz__media { position: relative; }
+.dz__media img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.dz__code {
+  position: absolute; left: .75rem; top: .75rem;
+  background: var(--ink); color: var(--ivory);
+  font-size: .75rem; letter-spacing: .12em; padding: .3rem .55rem;
+}
+
+.dz__body { padding: 1.1rem 1.1rem 1.25rem; display: flex; flex-direction: column; gap: .7rem; flex: 1; }
+.dz__body h3 { font-size: 1.1rem; }
+.dz__body > p { color: var(--muted); font-size: .92rem; line-height: 1.6; }
+
+.dz__tags { display: flex; flex-wrap: wrap; gap: .35rem; padding: 0; margin: 0; list-style: none; }
+.dz__tags li {
+  font-size: .72rem; letter-spacing: .06em; color: var(--champagne-dim);
+  border: 1px solid var(--line-soft); padding: .2rem .5rem;
+}
+
+.dz__more summary { cursor: pointer; font-size: .85rem; font-weight: 500; }
+.dz__more dl { margin: .75rem 0 0; display: grid; gap: .55rem; }
+.dz__more dt { font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.dz__more dd { margin: .15rem 0 0; font-size: .88rem; line-height: 1.55; }
+.dz__more { margin-bottom: .35rem; }
+.dz__features { margin: .75rem 0 0; padding-left: 1.1rem; list-style: disc; font-size: .88rem; line-height: 1.6; }
+
+/* The button sits at the bottom of every card, so a row of cards lines up. */
+.dz__pick { margin-top: auto; justify-content: center; }
+
+/* On phones the chips scroll sideways instead of filling the first screen. */
+@media (max-width: 699px) {
+  .dz__filters {
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+    margin-inline: -16px; padding-inline: 16px;
+  }
+  .dz__filters::-webkit-scrollbar { display: none; }
+  .dz__chip { flex: none; }
+}
