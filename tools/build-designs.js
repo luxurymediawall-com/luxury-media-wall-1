@@ -19,24 +19,25 @@ vm.runInNewContext(src + '\n;this.out = { CONTACT, PROJECTS, ENTRANCES };', ctx)
 const { CONTACT, PROJECTS, ENTRANCES } = ctx.out;
 
 /* Photographs of walls our own team built. Kept apart from the design
-   collection so nobody mistakes a design for a finished job, or the reverse. */
+   collection so nobody mistakes a design for a finished job, or the reverse.
+   `late: true` moves a photo to the last section of the page instead. */
 const REAL = [
-  { img: 'real-05-bedroom-tv-wall', title: 'Bedroom TV Wall',
-    text: 'White marble surround, fluted walnut side panel, floating walnut drawers and a vanity with an oval mirror.',
-    tags: ['Marble', 'Walnut', 'Fluted', 'Bedroom'] },
   { img: 'real-01-living-media-wall', title: 'Living Room Media Wall',
     text: 'Marble-look TV surround, walnut shelving with lit niches and a long floating console.',
     tags: ['Marble', 'Walnut', 'LED'] },
-  { img: 'real-02-bedroom-feature-wall', title: 'Bedroom Feature Wall',
-    text: 'Fluted walnut headboard panel with built-in lighting and matching side panels.',
-    tags: ['Walnut', 'Fluted', 'Bedroom'] },
-  { img: 'real-06-mirror-console', title: 'Entrance Console with Mirrors',
-    text: 'Solid wood console with a marble top under three gold-framed oval mirrors.',
-    tags: ['Marble', 'Mirror', 'Entrance'] },
   { img: 'real-03-entrance-wood-mosaic', title: 'Entrance Feature Wall',
     text: '3D timber mosaic framed by walnut wall panels and a slim stone-top console.',
     tags: ['Walnut', 'Entrance'] },
-  { img: 'real-04-walk-in-wardrobe', title: 'Walk-in Wardrobe',
+  { late: true, img: 'real-05-bedroom-tv-wall', title: 'Bedroom TV Wall',
+    text: 'White marble surround, fluted walnut side panel, floating walnut drawers and a vanity with an oval mirror.',
+    tags: ['Marble', 'Walnut', 'Fluted', 'Bedroom'] },
+  { late: true, img: 'real-02-bedroom-feature-wall', title: 'Bedroom Feature Wall',
+    text: 'Fluted walnut headboard panel with built-in lighting and matching side panels.',
+    tags: ['Walnut', 'Fluted', 'Bedroom'] },
+  { late: true, img: 'real-06-mirror-console', title: 'Entrance Console with Mirrors',
+    text: 'Solid wood console with a marble top under three gold-framed oval mirrors.',
+    tags: ['Marble', 'Mirror', 'Entrance'] },
+  { late: true, img: 'real-04-walk-in-wardrobe', title: 'Walk-in Wardrobe',
     text: 'Walnut joinery with LED-lit shelving, smoked glass and a mirrored door.',
     tags: ['Walnut', 'LED', 'Wardrobe'] }
 ];
@@ -129,10 +130,12 @@ const card = ({ code, group, title, text, tags, img, alt, rows, features }) => {
     </article>`;
 };
 
-const real = REAL.map((r, i) => card({
+const realCards = REAL.map((r, i) => card({
   code: 'R' + (i + 1), group: 'real', title: r.title, text: r.text, tags: r.tags,
-  img: r.img, rows: [['Type', 'Real installation by our team']]
+  img: r.img, rows: [['Type', 'Real installation by our team']], late: r.late
 }));
+const real = realCards.filter((c, i) => !REAL[i].late);
+const realLate = realCards.filter((c, i) => REAL[i].late);
 
 const designs = [
   ...PROJECTS.map((p) => ({ title: p.title, text: p.short, tags: p.tags, img: p.img, alt: p.alt,
@@ -148,7 +151,7 @@ const entrances = ENTRANCES.map((e, i) => card({
   img: e.img, alt: e.alt, rows: [['Finishes', e.spec], ['Best for', e.best]]
 }));
 
-const total = real.length + designs.length + entrances.length;
+const total = realCards.length + designs.length + entrances.length;
 
 const html = `<!DOCTYPE html>
 <html lang="en">
@@ -249,6 +252,13 @@ const html = `<!DOCTYPE html>
     </div>
   </section>
 
+  <section class="dz__section" data-section="real-more">
+    <h2>More real projects</h2>
+    <p>Bedrooms, consoles and wardrobes our team has built.</p>
+    <div class="dz__grid">${realLate.join('')}
+    </div>
+  </section>
+
   <div class="svc__cta">
     <div>
       <h2>Not sure which one?</h2>
@@ -318,4 +328,4 @@ const html = `<!DOCTYPE html>
 
 fs.mkdirSync(path.join(root, 'designs'), { recursive: true });
 fs.writeFileSync(path.join(root, 'designs/index.html'), html);
-console.log(`designs/index.html: ${real.length} real, ${designs.length} media walls, ${entrances.length} entrances`);
+console.log(`designs/index.html: ${realCards.length} real, ${designs.length} media walls, ${entrances.length} entrances`);
