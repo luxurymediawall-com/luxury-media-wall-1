@@ -22,10 +22,10 @@ const { CONTACT, PROJECTS, ENTRANCES } = ctx.out;
    collection so nobody mistakes a design for a finished job, or the reverse.
    `late: true` moves a photo to the last section of the page instead. */
 const REAL = [
-  { img: 'real-01-living-media-wall', title: 'Living Room Media Wall',
+  { late: true, img: 'real-01-living-media-wall', title: 'Living Room Media Wall',
     text: 'Marble-look TV surround, walnut shelving with lit niches and a long floating console.',
     tags: ['Marble', 'Walnut', 'LED'] },
-  { img: 'real-03-entrance-wood-mosaic', title: 'Entrance Feature Wall',
+  { late: true, img: 'real-03-entrance-wood-mosaic', title: 'Entrance Feature Wall',
     text: '3D timber mosaic framed by walnut wall panels and a slim stone-top console.',
     tags: ['Walnut', 'Entrance'] },
   { late: true, img: 'real-05-bedroom-tv-wall', title: 'Bedroom TV Wall',
@@ -231,12 +231,13 @@ const html = `<!DOCTYPE html>
   </div>
   <p class="dz__count" aria-live="polite"><span id="dz-count">${total}</span> designs</p>
 
-  <section class="dz__section" data-section="real">
+${real.length ? `  <section class="dz__section" data-section="real">
     <h2>Real projects by our team</h2>
     <p>Photographs of walls we designed, built and installed.</p>
     <div class="dz__grid">${real.join('')}
     </div>
   </section>
+` : ''}
 
   <section class="dz__section" data-section="wall">
     <h2>Media wall &amp; TV wall designs</h2>
@@ -253,8 +254,8 @@ const html = `<!DOCTYPE html>
   </section>
 
   <section class="dz__section" data-section="real-more">
-    <h2>More real projects</h2>
-    <p>Bedrooms, consoles and wardrobes our team has built.</p>
+    <h2>Real projects by our team</h2>
+    <p>Photographs of walls we designed, built and installed.</p>
     <div class="dz__grid">${realLate.join('')}
     </div>
   </section>
