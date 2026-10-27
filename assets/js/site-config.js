@@ -634,6 +634,38 @@ const SERVICES = [
    concealed lighting, a floating unit - at the front door. Each entry is a
    design direction rather than a named project, so the copy describes what
    is built and what it suits, never where it was installed. */
+/* ------------------------------------------------------- WALL MOULDING */
+/* Classical plaster moulding and panelling - a different trade from the
+   media walls above, and a deliberately separate section. Mixed into the
+   projects carousel these would read as a mistake: that work is fluted
+   timber, backlit stone and dark walnut, and this is cream and gilt. */
+const MOULDING = [
+  {
+    img: 'assets/img/moulding-gold-majlis',
+    title: 'Gilded Majlis Panelling',
+    text: 'Full-height panelling run around a double-height majlis, with a carved cornice, arched centre panel and gilded detailing picked out against a cream ground. The mouldings are set out from the window line so the panels stay even either side of the fireplace.',
+    spec: 'Plaster moulding - carved cornice - gilt detailing - marble fire surround',
+    best: 'A formal majlis or reception with high ceilings',
+    alt: 'Double-height majlis with gilded cream wall panelling, chandeliers and a marble fireplace, Dubai skyline beyond'
+  },
+  {
+    img: 'assets/img/moulding-panelled-mirror',
+    title: 'Panelled Wall & Gilt Mirror',
+    text: 'A long wall divided into tall panels with ornamented corners, centred on a gilt mirror above a carved fire surround. Wall lights sit inside the panel field rather than between panels, which is what keeps the rhythm reading evenly across the room.',
+    spec: 'Panel moulding - corner ornaments - picture lights - marble inlay floor',
+    best: 'A living room where one long wall carries the whole scheme',
+    alt: 'Classical cream panelled wall with a gilt mirror, wall lights and a marble fireplace'
+  },
+  {
+    img: 'assets/img/moulding-quiet-classical',
+    title: 'Quiet Classical Panelling',
+    text: 'The same trade without the gilt: plain profiles in a soft off-white, a dado run carried round the room and a single picture light. It suits a space meant to feel calm rather than grand, and sits comfortably against timber floors and modern furniture.',
+    spec: 'Plain panel profiles - dado rail - painted finish - no gilding',
+    best: 'A room that wants the panelling to be quiet, not the feature',
+    alt: 'Restrained off-white wall panelling with a dado rail, console table and herringbone floor'
+  }
+];
+
 const ENTRANCES = [
   {
     img: 'assets/img/entry-blossom-mirror',

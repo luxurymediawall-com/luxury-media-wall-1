@@ -718,6 +718,29 @@
   /* =========================================== 9b. RENDER: ENTRANCES */
   /* Entrance and hallway joinery. Each card is a design direction, not a
      named project, so the copy says what is built and nothing about where. */
+  /* Same card as the entrances grid, which is the point: it is the same
+     kind of content - a wall treatment with a spec and a best-fit - so it
+     reuses .entry rather than growing a near-identical set of rules. */
+  function renderMoulding() {
+    const grid = $('#mouldingGrid');
+    if (!grid || typeof MOULDING === 'undefined' || !MOULDING.length) return;
+    grid.innerHTML = MOULDING.map((m, i) => `
+      <figure class="entry" data-reveal style="--reveal-delay:${(i % 3) * 90}ms">
+        <span class="entry__media">
+          <img src="${asset(m.img + '-900.jpg')}" srcset="${srcsetCard(m.img)}"
+               sizes="(max-width: 720px) 88vw, (max-width: 1100px) 44vw, 30vw"
+               loading="lazy" decoding="async" alt="${esc(m.alt)}">
+        </span>
+        <figcaption class="entry__body">
+          <h3>${esc(m.title)}</h3>
+          <p>${esc(m.text)}</p>
+          <p class="entry__spec">${esc(m.spec)}</p>
+          <p class="entry__best"><b>Suits</b> ${esc(m.best)}</p>
+        </figcaption>
+      </figure>
+    `).join('');
+  }
+
   function renderEntrances() {
     const grid = $('#entryGrid');
     if (!grid || typeof ENTRANCES === 'undefined' || !ENTRANCES.length) return;
@@ -2511,6 +2534,7 @@ void main() {
     renderFinishes();
     initMaterialsMorph();
     renderWallGuide();
+    renderMoulding();
     renderEntrances();
     renderQuotes();
     renderSignature();
