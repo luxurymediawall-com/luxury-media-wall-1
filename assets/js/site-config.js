@@ -642,27 +642,27 @@ const SERVICES = [
 const MOULDING = [
   {
     img: 'assets/img/moulding-gold-majlis',
-    title: 'Gilded Cornice & Panel Moulding',
-    text: 'A deep carved cornice carried right round a double-height majlis, with panel mouldings below it and the raised profiles picked out in gold against a cream ground. The setting out starts from the window line, so the panel widths stay even across the room instead of leaving a half panel in the corner.',
-    spec: 'Carved cornice - panel moulding - gilded profiles - ceiling rose',
+    title: 'Gilded Cornice Moulding',
+    text: 'A deep carved cornice carried right round a double-height majlis, with moulding run below it and the raised profiles picked out in gold against a cream ground. The setting out starts from the window line, so the moulding stays even across the room instead of leaving a short run in the corner.',
+    spec: 'Carved cornice - gilded moulding - cast ornament - ceiling rose',
     best: 'A formal majlis or reception with high ceilings',
-    alt: 'Carved cornice and gilded panel moulding running round a double-height cream majlis'
+    alt: 'Carved cornice and gilded moulding running round a double-height cream majlis'
   },
   {
     img: 'assets/img/moulding-panelled-mirror',
-    title: 'Ornamented Panel Moulding',
-    text: 'Tall moulding frames with cast corner ornaments, run the length of one wall and returned round the room so the rhythm never breaks at a corner. The profiles are mitred and filled on site, then painted with the wall, which is what makes the moulding read as part of the plaster rather than something applied to it.',
-    spec: 'Panel moulding - cast corner ornaments - mitred and filled - painted in',
+    title: 'Ornamented Moulding',
+    text: 'Moulding run the full height of a wall with cast corner ornaments, and returned round the room so the rhythm never breaks at a corner. The profiles are mitred and filled on site, then painted with the wall, which is what makes the moulding read as part of the plaster rather than something applied to it.',
+    spec: 'Moulding run - cast corner ornaments - mitred and filled - painted in',
     best: 'A long wall that sets the rhythm for the whole room',
-    alt: 'Tall panel moulding frames with cast corner ornaments on a cream classical wall'
+    alt: 'Full-height moulding with cast corner ornaments on a cream classical wall'
   },
   {
     img: 'assets/img/moulding-quiet-classical',
-    title: 'Plain Profile Moulding',
-    text: 'The same trade without the gilding: simple square-edged profiles in a soft off-white, with a dado rail carried round at chair height and the panels above it left plain. It suits a room meant to feel calm rather than grand, and sits comfortably against timber floors and modern furniture.',
-    spec: 'Plain panel profiles - dado rail - painted finish - no gilding',
+    title: 'Plain Moulding',
+    text: 'The same trade without the gilding: simple square-edged moulding in a soft off-white, with a dado rail carried round at chair height and the wall above it left plain. It suits a room meant to feel calm rather than grand, and sits comfortably against timber floors and modern furniture.',
+    spec: 'Plain moulding - dado rail - painted finish - no gilding',
     best: 'A room where the moulding should stay quiet, not be the feature',
-    alt: 'Plain off-white panel moulding with a dado rail carried round at chair height'
+    alt: 'Plain off-white moulding with a dado rail carried round at chair height'
   }
 ];
 
