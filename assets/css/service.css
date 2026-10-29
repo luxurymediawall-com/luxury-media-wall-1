@@ -84,3 +84,18 @@
 .svc__photo { margin: clamp(2.5rem, 5vh, 3.5rem) 0 0; max-width: 52rem; }
 .svc__photo img { display: block; width: 100%; height: auto; }
 .svc__photo figcaption { margin-top: .6rem; font-size: .85rem; color: var(--muted); }
+
+.svc__price { margin-top: 1.25rem; font-size: .95rem; color: var(--muted); }
+.svc__price strong { color: var(--charcoal); font-weight: 600; }
+
+/* Real project photos under the intro: four across, two on phones. */
+.svc__section--wide { max-width: 52rem; }
+.svc__gallery {
+  margin-top: 1.5rem; display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+}
+.svc__gallery figure { margin: 0; }
+.svc__gallery img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.svc__gallery figcaption { margin-top: .5rem; font-size: .85rem; color: var(--muted); }
+.svc__more { margin-top: 1.25rem; }
+.svc__more a { border-bottom: 1px solid currentColor; }
