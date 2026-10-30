@@ -22,6 +22,15 @@ const { CONTACT, PROJECTS, ENTRANCES } = ctx.out;
    collection so nobody mistakes a design for a finished job, or the reverse.
    `late: true` moves a photo to the last section of the page instead. */
 const REAL = [
+  { late: true, img: 'real-07-walnut-media-wall', title: 'Walnut Media Wall with Lit Shelves',
+    text: 'Full-height walnut cabinets with LED-lit open shelves, a backlit TV recess and a floating unit with lit drawers.',
+    tags: ['Walnut', 'LED', 'Storage'] },
+  { late: true, img: 'real-08-glass-display-media-wall', title: 'Glass Display Media Wall',
+    text: 'Dark walnut tall units with smoked-glass display cabinets, LED shelves and a white floating console.',
+    tags: ['Walnut', 'LED', 'Glass'] },
+  { late: true, img: 'real-09-walnut-media-wall-side', title: 'Walnut Media Wall (Side View)',
+    text: 'The same walnut wall from the side, showing the depth of the lit shelving and the full-height cabinets.',
+    tags: ['Walnut', 'LED', 'Storage'] },
   { late: true, img: 'real-01-living-media-wall', title: 'Living Room Media Wall',
     text: 'Marble-look TV surround, walnut shelving with lit niches and a long floating console.',
     tags: ['Marble', 'Walnut', 'LED'] },
