@@ -36,7 +36,13 @@ const CONTACT = {
 
   city:          'Dubai',
   country:       'United Arab Emirates',
-  email:         'mohsin@luxurymediawall.com'
+  email:         'mohsin@luxurymediawall.com',
+
+  /* Every enquiry form is also emailed here (FormSubmit, no account needed),
+     so a lead is kept even if the visitor never presses Send in WhatsApp.
+     The first submission sends a one-time activation email to this inbox:
+     click it, or nothing arrives. Leave empty to turn the copy off. */
+  leadEndpoint:  'https://formsubmit.co/ajax/mohsin@luxurymediawall.com'
 };
 
 /* Pre-filled WhatsApp message for a specific project enquiry */

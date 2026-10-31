@@ -143,15 +143,16 @@
   }, true);
 
   /* ---------------------------------------------------------------- forms */
-  /* #enquiryForm is a lead and counts as a conversion. #reviewForm is a
-     customer leaving a review - worth measuring, never a conversion. */
+  /* A sent enquiry is a lead and counts as a conversion. main.js fires
+     enquiry:sent only once the form passes validation, so a submit that
+     stops on an empty field is not counted. #reviewForm is a customer
+     leaving a review - worth measuring, never a conversion. */
+  document.addEventListener('enquiry:sent', function () {
+    record('enquiry_form_submit', 'enquiryForm', { event_category: 'enquiry' }, 'Lead');
+  });
   document.addEventListener('submit', function (ev) {
     var form = ev.target;
-    if (!form || form.nodeType !== 1) return;
-
-    if (form.id === 'enquiryForm') {
-      record('enquiry_form_submit', 'enquiryForm', { event_category: 'enquiry' }, 'Lead');
-    } else if (form.id === 'reviewForm') {
+    if (form && form.nodeType === 1 && form.id === 'reviewForm') {
       record('review_submit', null, { event_category: 'engagement' });
     }
   }, true);

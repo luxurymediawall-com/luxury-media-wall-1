@@ -1178,6 +1178,33 @@
 
       window.open(waLink(lines.join('\n')), '_blank', 'noopener');
 
+      /* Keep a copy of the lead by email as well. Fire-and-forget after the
+         WhatsApp window is open, so a slow or failed request never blocks
+         the visitor; keepalive lets it finish even if they leave the page. */
+      if (CONTACT.leadEndpoint) {
+        fetch(CONTACT.leadEndpoint, {
+          method: 'POST',
+          keepalive: true,
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            _subject: `New website enquiry: ${v('fName')} (${v('wallType')})`,
+            _template: 'table',
+            _captcha: 'false',
+            name: v('fName'),
+            phone: v('fPhone'),
+            email: v('fEmail'),
+            location: v('fLocation'),
+            wall_type: v('wallType'),
+            wall_size: v('fSize'),
+            message: v('fMessage'),
+            page: location.href
+          })
+        }).catch(() => {});
+      }
+
+      /* Only a valid, sent enquiry counts as a lead (see analytics.js). */
+      document.dispatchEvent(new CustomEvent('enquiry:sent'));
+
       const status = $('#formStatus', form);
       status.classList.add('is-shown');
       status.textContent =
