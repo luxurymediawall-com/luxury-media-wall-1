@@ -2182,14 +2182,19 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
      the fan has to be tighter there or the outer photographs walk off the
      side of the screen. */
   --spread: 11%;
-  --open-scale: .9;
+  --open-scale: 1;
   justify-items: center;
 }
 @media (min-width: 600px) {
   .folders { grid-template-columns: repeat(2, 1fr); }
 }
 @media (min-width: 900px) {
-  .folders { grid-template-columns: repeat(3, 1fr); --spread: 16%; --open-scale: 1; }
+  .folders { grid-template-columns: repeat(3, 1fr); --spread: 9%; --open-scale: 1.15; }
+}
+/* Three narrow columns: the same lift would carry the outermost photograph
+   off the left of the screen, so it is eased until there is room for it. */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .folders { --spread: 7%; --open-scale: 1.05; }
 }
 
 .folder {
@@ -2250,7 +2255,9 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   --fan-y: calc(var(--i) * -1.7%);
   --fan-r: calc((var(--i) - var(--mid)) * 1.5deg);
   --fan-s: 1;
-  transform-origin: 50% 100%;
+  /* Centre origin, so a photograph coming out of the folder grows in every
+     direction instead of rearing up off its bottom edge. */
+  transform-origin: 50% 50%;
   transform: translateZ(var(--fan-z)) translate(var(--fan-x), var(--fan-y))
              rotate(var(--fan-r)) scale(var(--fan-s));
   transition: transform var(--dur-slow) var(--ease);
@@ -2279,12 +2286,15 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   --fan-y: calc(-5% + var(--i) * -1.7%);
 }
 
-/* open: the fan */
+/* Open: the photographs come out of the folder towards you. Most of the
+   growth is the big translateZ against the 1200px perspective rather than
+   scale, so they read as lifting out of the envelope rather than simply
+   being drawn larger - and they go back in the same way when it shuts. */
 .folder.is-open .folder__file {
-  --fan-z: calc(42px + var(--i) * 6px);
+  --fan-z: calc(150px + var(--i) * 12px);
   --fan-x: calc((var(--i) - var(--mid)) * var(--spread));
-  --fan-y: -14%;
-  --fan-r: calc((var(--i) - var(--mid)) * 6deg);
+  --fan-y: -6%;
+  --fan-r: calc((var(--i) - var(--mid)) * 5deg);
   --fan-s: var(--open-scale);
 }
 /* The fan overlaps, so only one caption shows at a time: the photograph on
@@ -2298,7 +2308,8 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
 .folder.is-open .folder__file:hover,
 .folder.is-open .folder__file:focus-within {
   z-index: 9;
-  --fan-z: 92px; --fan-y: -20%; --fan-r: 0deg; --fan-s: calc(var(--open-scale) * 1.07);
+  --fan-z: 255px; --fan-x: 0%; --fan-y: -8%; --fan-r: 0deg;
+  --fan-s: calc(var(--open-scale) * 1.03);
 }
 
 /* ------------------------------- the glass front, hinged at the bottom */
