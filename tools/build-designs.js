@@ -332,6 +332,7 @@ ${real.length ? `  <section class="dz__section" data-section="real">
   };
 </script>
 <script src="../assets/js/analytics.js" defer></script>
+<script src="../assets/js/wa-hint.js" defer></script>
 </body>
 </html>
 `;
