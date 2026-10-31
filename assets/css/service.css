@@ -99,3 +99,6 @@
 .svc__gallery figcaption { margin-top: .5rem; font-size: .85rem; color: var(--muted); }
 .svc__more { margin-top: 1.25rem; }
 .svc__more a { border-bottom: 1px solid currentColor; }
+
+.svc__list { margin-top: 1rem; padding-left: 1.2rem; list-style: disc; color: var(--muted); line-height: 1.75; }
+.svc__section > p a, .svc__qa a { border-bottom: 1px solid currentColor; }
