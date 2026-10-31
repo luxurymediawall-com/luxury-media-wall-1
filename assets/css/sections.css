@@ -2183,6 +2183,10 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
      side of the screen. */
   --spread: 11%;
   --open-scale: .9;
+  justify-items: center;
+}
+@media (min-width: 600px) {
+  .folders { grid-template-columns: repeat(2, 1fr); }
 }
 @media (min-width: 900px) {
   .folders { grid-template-columns: repeat(3, 1fr); --spread: 16%; --open-scale: 1; }
@@ -2190,6 +2194,12 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
 
 .folder {
   position: relative; z-index: 1;
+  width: 100%;
+  /* The glass sheet leans towards the camera, so perspective draws its top
+     edge about 9% wider than the card. On a wide single column that spills
+     past the gutter, so the card itself is capped - at three across the cap
+     never binds. */
+  max-width: 460px;
   perspective: 1200px;
   transition: opacity var(--dur) var(--ease);
 }
