@@ -1259,6 +1259,44 @@
     window.addEventListener('scroll', show, { passive: true });
   }
 
+  /* ============================================= 16b. GLASS FOLDERS */
+  /* The installation photographs, filed by room. A folder is shut by default
+     and CSS owns the lean on hover, so the section still behaves without
+     this; all that is left here is the open state: one folder open at a
+     time, a class on the container so the others can step back, and Escape
+     to shut. The button that covers the card carries aria-expanded, which is
+     also what makes the folder keyboard-operable. */
+  function initFolders() {
+    const wrap = $('.folders');
+    const folders = wrap ? $$('.folder', wrap) : [];
+    if (!folders.length) return;
+
+    function open(folder) {
+      folders.forEach((f) => {
+        const on = f === folder;
+        f.classList.toggle('is-open', on);
+        const btn = $('.folder__hit', f);
+        if (btn) btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+      });
+      wrap.classList.toggle('has-open', !!folder);
+    }
+
+    folders.forEach((folder) => {
+      const btn = $('.folder__hit', folder);
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        open(folder.classList.contains('is-open') ? null : folder);
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || !wrap.classList.contains('has-open')) return;
+      const current = $('.folder.is-open .folder__hit', wrap);
+      open(null);
+      if (current) current.focus();
+    });
+  }
+
   /* ============================================ 17. STATIC MEDIA -> IK */
   /* The images written directly into index.html. Only elements tagged
      data-ik are rewritten, and every one of them is lazy-loaded, so nothing
@@ -2582,6 +2620,7 @@ void main() {
     initLens();
     initViewfinder();
     initFloat();
+    initFolders();
 
     initWordReveal();
     initReveal();

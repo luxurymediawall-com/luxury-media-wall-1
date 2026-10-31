@@ -286,73 +286,136 @@
       </div>
     </div>
 
-    <div class="installs">
-      <figure class="installs__item installs__item--wide" data-reveal>
-        <img src="assets/img/real-01-living-media-wall-900.jpg"
-             srcset="assets/img/real-01-living-media-wall-480.jpg 480w, assets/img/real-01-living-media-wall-900.jpg 900w, assets/img/real-01-living-media-wall-1400.jpg 1400w"
-             sizes="(min-width: 900px) 66vw, 100vw" width="1400" height="1099" loading="lazy" decoding="async"
-             alt="Living room media wall with a marble-look TV surround, walnut shelving and a floating console">
-        <figcaption>Living room media wall · marble surround, walnut shelving, floating console</figcaption>
-      </figure>
-      <figure class="installs__item installs__item--tall" data-reveal>
-        <img src="assets/img/real-02-bedroom-feature-wall-900.jpg"
-             srcset="assets/img/real-02-bedroom-feature-wall-480.jpg 480w, assets/img/real-02-bedroom-feature-wall-900.jpg 900w, assets/img/real-02-bedroom-feature-wall-1400.jpg 1400w"
-             sizes="(min-width: 900px) 33vw, 100vw" width="1400" height="2326" loading="lazy" decoding="async"
-             alt="Bedroom feature wall with a fluted walnut headboard panel and built-in niches">
-        <figcaption>Bedroom feature wall · fluted walnut headboard</figcaption>
-      </figure>
-      <figure class="installs__item" data-reveal>
-        <img src="assets/img/real-03-entrance-wood-mosaic-900.jpg"
-             srcset="assets/img/real-03-entrance-wood-mosaic-480.jpg 480w, assets/img/real-03-entrance-wood-mosaic-900.jpg 900w, assets/img/real-03-entrance-wood-mosaic-1400.jpg 1400w"
-             sizes="(min-width: 900px) 50vw, 100vw" width="1600" height="1200" loading="lazy" decoding="async"
-             alt="Entrance feature wall in 3D timber mosaic framed by walnut wall panels">
-        <figcaption>Entrance feature wall · 3D timber mosaic, walnut cladding</figcaption>
-      </figure>
-      <figure class="installs__item" data-reveal>
-        <img src="assets/img/real-04-walk-in-wardrobe-900.jpg"
-             srcset="assets/img/real-04-walk-in-wardrobe-480.jpg 480w, assets/img/real-04-walk-in-wardrobe-900.jpg 900w, assets/img/real-04-walk-in-wardrobe-1400.jpg 1400w"
-             sizes="(min-width: 900px) 50vw, 100vw" width="1600" height="1200" loading="lazy" decoding="async"
-             alt="Walk-in wardrobe in walnut joinery with LED-lit shelving and smoked glass">
-        <figcaption>Walk-in wardrobe · walnut joinery with LED shelving</figcaption>
-      </figure>
-      <figure class="installs__item installs__item--wide" data-reveal>
-        <img src="assets/img/real-05-bedroom-tv-wall-900.jpg"
-             srcset="assets/img/real-05-bedroom-tv-wall-480.jpg 480w, assets/img/real-05-bedroom-tv-wall-900.jpg 900w, assets/img/real-05-bedroom-tv-wall-1400.jpg 1400w"
-             sizes="(min-width: 900px) 66vw, 100vw" width="1400" height="1131" loading="lazy" decoding="async"
-             alt="Bedroom TV wall with a white marble surround, fluted walnut panel, floating drawers and a vanity with an oval mirror">
-        <figcaption>Bedroom TV wall · marble surround, fluted walnut, floating vanity</figcaption>
-      </figure>
-      <figure class="installs__item installs__item--tall" data-reveal>
-        <img src="assets/img/real-06-mirror-console-900.jpg"
-             srcset="assets/img/real-06-mirror-console-480.jpg 480w, assets/img/real-06-mirror-console-900.jpg 900w, assets/img/real-06-mirror-console-1400.jpg 1400w"
-             sizes="(min-width: 900px) 33vw, 100vw" width="1400" height="2339" loading="lazy" decoding="async"
-             alt="Entrance console in solid wood with a marble top under three gold-framed oval mirrors">
-        <figcaption>Entrance console · marble top, gold oval mirrors</figcaption>
-      </figure>
-      <figure class="installs__item installs__item--wide" data-reveal>
-        <img src="assets/img/real-07-walnut-media-wall-900.jpg"
-             srcset="assets/img/real-07-walnut-media-wall-480.jpg 480w, assets/img/real-07-walnut-media-wall-900.jpg 900w, assets/img/real-07-walnut-media-wall-1400.jpg 1400w"
-             sizes="(min-width: 900px) 66vw, 100vw" width="1400" height="1518" loading="lazy" decoding="async"
-             alt="Walnut media wall with full-height cabinets, LED-lit open shelves and a floating unit with lit drawers">
-        <figcaption>Walnut media wall · lit shelving, floating unit with lit drawers</figcaption>
-      </figure>
-      <figure class="installs__item installs__item--tall" data-reveal>
-        <img src="assets/img/real-09-walnut-media-wall-side-900.jpg"
-             srcset="assets/img/real-09-walnut-media-wall-side-480.jpg 480w, assets/img/real-09-walnut-media-wall-side-900.jpg 900w, assets/img/real-09-walnut-media-wall-side-1400.jpg 1400w"
-             sizes="(min-width: 900px) 33vw, 100vw" width="1400" height="1919" loading="lazy" decoding="async"
-             alt="Side view of a walnut media wall showing the depth of its lit shelves">
-        <figcaption>Same wall from the side · full-height walnut</figcaption>
-      </figure>
-    </div>
+    <!-- The site photographs, filed by room. Each folder is a sheet of
+         frosted glass hinged on its bottom edge: the photographs sit behind
+         it and read through the blur, and opening the folder drops the glass
+         and fans them out. Every photograph and caption is in the markup
+         whether the folder is open or shut, so nothing is hidden from search
+         by the animation. Without JavaScript the folders stay shut and the
+         photographs still read through the glass, which is why each one is a
+         real <figure> and not a background image. -->
+    <div class="folders">
+      <div class="folder" data-folder style="--mid: 1">
+        <div class="folder__stage">
+          <span class="folder__back" aria-hidden="true"></span>
+          <ul class="folder__files" id="installFiles1">
+            <li class="folder__file" style="--i: 0">
+              <figure>
+                <img src="assets/img/real-01-living-media-wall-900.jpg"
+                     srcset="assets/img/real-01-living-media-wall-480.jpg 480w, assets/img/real-01-living-media-wall-900.jpg 900w"
+                     sizes="(min-width: 900px) 320px, 80vw" width="1400" height="1099" loading="lazy" decoding="async"
+                     alt="Living room media wall with a marble-look TV surround, walnut shelving and a floating console">
+                <figcaption>Living room media wall &middot; marble surround, walnut shelving, floating console</figcaption>
+              </figure>
+            </li>
+            <li class="folder__file" style="--i: 1">
+              <figure>
+                <img src="assets/img/real-07-walnut-media-wall-900.jpg"
+                     srcset="assets/img/real-07-walnut-media-wall-480.jpg 480w, assets/img/real-07-walnut-media-wall-900.jpg 900w"
+                     sizes="(min-width: 900px) 320px, 80vw" width="1400" height="1518" loading="lazy" decoding="async"
+                     alt="Walnut media wall with full-height cabinets, LED-lit open shelves and a floating unit with lit drawers">
+                <figcaption>Walnut media wall &middot; lit shelving, floating unit with lit drawers</figcaption>
+              </figure>
+            </li>
+            <li class="folder__file" style="--i: 2">
+              <figure>
+                <img src="assets/img/real-09-walnut-media-wall-side-900.jpg"
+                     srcset="assets/img/real-09-walnut-media-wall-side-480.jpg 480w, assets/img/real-09-walnut-media-wall-side-900.jpg 900w"
+                     sizes="(min-width: 900px) 320px, 80vw" width="1400" height="1919" loading="lazy" decoding="async"
+                     alt="Side view of a walnut media wall showing the depth of its lit shelves">
+                <figcaption>The same wall from the side &middot; full-height walnut</figcaption>
+              </figure>
+            </li>
+          </ul>
+          <span class="folder__front" aria-hidden="true"></span>
+          <button class="folder__hit" type="button" aria-expanded="false" aria-controls="installFiles1">
+            <span class="sr-only">Living room photographs, 3 in this folder</span>
+            <span class="folder__close" aria-hidden="true">Close</span>
+          </button>
+        </div>
+        <div class="folder__meta">
+          <h3 class="folder__label">Living rooms</h3>
+          <span class="folder__hint" aria-hidden="true">3 photographs</span>
+        </div>
+      </div>
 
-    <div class="installs__video" data-reveal>
-      <iframe src="https://www.youtube-nocookie.com/embed/Ip-ARItnmeg?rel=0" title="Luxury Media Wall installation video"
-              loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen></iframe>
-      <div>
-        <p class="eyebrow">On video</p>
-        <h3 class="h3 mt-6">See one of our walls on site</h3>
-        <p class="lede mt-6">A short walk-through of a finished installation. More on our YouTube and TikTok.</p>
+      <div class="folder" data-folder style="--mid: .5">
+        <div class="folder__stage">
+          <span class="folder__back" aria-hidden="true"></span>
+          <ul class="folder__files" id="installFiles2">
+            <li class="folder__file" style="--i: 0">
+              <figure>
+                <img src="assets/img/real-05-bedroom-tv-wall-900.jpg"
+                     srcset="assets/img/real-05-bedroom-tv-wall-480.jpg 480w, assets/img/real-05-bedroom-tv-wall-900.jpg 900w"
+                     sizes="(min-width: 900px) 320px, 80vw" width="1400" height="1131" loading="lazy" decoding="async"
+                     alt="Bedroom TV wall with a white marble surround, fluted walnut panel, floating drawers and a vanity with an oval mirror">
+                <figcaption>Bedroom TV wall &middot; marble surround, fluted walnut, floating vanity</figcaption>
+              </figure>
+            </li>
+            <li class="folder__file" style="--i: 1">
+              <figure>
+                <img src="assets/img/real-02-bedroom-feature-wall-900.jpg"
+                     srcset="assets/img/real-02-bedroom-feature-wall-480.jpg 480w, assets/img/real-02-bedroom-feature-wall-900.jpg 900w"
+                     sizes="(min-width: 900px) 320px, 80vw" width="1400" height="2326" loading="lazy" decoding="async"
+                     alt="Bedroom feature wall with a fluted walnut headboard panel and built-in niches">
+                <figcaption>Bedroom feature wall &middot; fluted walnut headboard</figcaption>
+              </figure>
+            </li>
+          </ul>
+          <span class="folder__front" aria-hidden="true"></span>
+          <button class="folder__hit" type="button" aria-expanded="false" aria-controls="installFiles2">
+            <span class="sr-only">Bedroom photographs, 2 in this folder</span>
+            <span class="folder__close" aria-hidden="true">Close</span>
+          </button>
+        </div>
+        <div class="folder__meta">
+          <h3 class="folder__label">Bedrooms</h3>
+          <span class="folder__hint" aria-hidden="true">2 photographs</span>
+        </div>
+      </div>
+
+      <div class="folder" data-folder style="--mid: 1">
+        <div class="folder__stage">
+          <span class="folder__back" aria-hidden="true"></span>
+          <ul class="folder__files" id="installFiles3">
+            <li class="folder__file" style="--i: 0">
+              <figure>
+                <img src="assets/img/real-03-entrance-wood-mosaic-900.jpg"
+                     srcset="assets/img/real-03-entrance-wood-mosaic-480.jpg 480w, assets/img/real-03-entrance-wood-mosaic-900.jpg 900w"
+                     sizes="(min-width: 900px) 320px, 80vw" width="1600" height="1200" loading="lazy" decoding="async"
+                     alt="Entrance feature wall in 3D timber mosaic framed by walnut wall panels">
+                <figcaption>Entrance feature wall &middot; 3D timber mosaic, walnut cladding</figcaption>
+              </figure>
+            </li>
+            <li class="folder__file" style="--i: 1">
+              <figure>
+                <img src="assets/img/real-06-mirror-console-900.jpg"
+                     srcset="assets/img/real-06-mirror-console-480.jpg 480w, assets/img/real-06-mirror-console-900.jpg 900w"
+                     sizes="(min-width: 900px) 320px, 80vw" width="1400" height="2339" loading="lazy" decoding="async"
+                     alt="Entrance console in solid wood with a marble top under three gold-framed oval mirrors">
+                <figcaption>Entrance console &middot; marble top, gold oval mirrors</figcaption>
+              </figure>
+            </li>
+            <li class="folder__file" style="--i: 2">
+              <figure>
+                <img src="assets/img/real-04-walk-in-wardrobe-900.jpg"
+                     srcset="assets/img/real-04-walk-in-wardrobe-480.jpg 480w, assets/img/real-04-walk-in-wardrobe-900.jpg 900w"
+                     sizes="(min-width: 900px) 320px, 80vw" width="1600" height="1200" loading="lazy" decoding="async"
+                     alt="Walk-in wardrobe in walnut joinery with LED-lit shelving and smoked glass">
+                <figcaption>Walk-in wardrobe &middot; walnut joinery with LED shelving</figcaption>
+              </figure>
+            </li>
+          </ul>
+          <span class="folder__front" aria-hidden="true"></span>
+          <button class="folder__hit" type="button" aria-expanded="false" aria-controls="installFiles3">
+            <span class="sr-only">Entrance and wardrobe photographs, 3 in this folder</span>
+            <span class="folder__close" aria-hidden="true">Close</span>
+          </button>
+        </div>
+        <div class="folder__meta">
+          <h3 class="folder__label">Entrances &amp; wardrobes</h3>
+          <span class="folder__hint" aria-hidden="true">3 photographs</span>
+        </div>
       </div>
     </div>
 
