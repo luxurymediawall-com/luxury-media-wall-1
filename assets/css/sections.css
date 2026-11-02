@@ -2369,7 +2369,7 @@ html:not(.js) .signoff__mark path { stroke-dashoffset: 0; }
   color: var(--taupe);
 }
 
-.installs__cta { margin-top: clamp(1.75rem, 3.5vw, 2.5rem); }
+.installs__cta { margin-top: clamp(1.75rem, 3.5vw, 2.5rem); display: flex; flex-wrap: wrap; gap: .75rem; }
 
 
 /* On a phone one folder fills the screen, so a fan would just stack the
