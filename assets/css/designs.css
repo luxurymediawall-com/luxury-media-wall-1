@@ -77,3 +77,9 @@
   .dz__filters::-webkit-scrollbar { display: none; }
   .dz__chip { flex: none; }
 }
+
+/* Written guide under the cards: gives the page its own text, not just pictures. */
+.dz__guide { max-width: 52rem; }
+.dz__h3 { margin-top: 2rem; font-size: 1.15rem; }
+.dz__guide .svc__qa { margin-top: 2rem; }
+.dz__guide a { border-bottom: 1px solid currentColor; }

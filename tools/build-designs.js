@@ -269,6 +269,34 @@ ${real.length ? `  <section class="dz__section" data-section="real">
     </div>
   </section>
 
+  <section class="dz__section dz__guide" data-section="guide">
+    <h2>How to choose your media wall design</h2>
+    <p>Most of our customers start with a picture they like and then adjust it to their own room. These five points decide whether a design will work on your wall.</p>
+    <ol class="svc__steps">
+      <li><strong>Start with the width of the wall</strong><span>Under about 3 m, a clean panel behind the TV with a floating unit usually looks best. From 3 to 4.5 m there is room for a shelving tower on each side. Above 4.5 m, a full-height wall with closed storage and display shelves fills the space without looking empty.</span></li>
+      <li><strong>Size the panel around your TV</strong><span>Leave space around the screen so it does not look squeezed: the TV is usually about half to two thirds of the width of the centre panel. Tell us your TV size, or the size you plan to buy, before we draw the wall.</span></li>
+      <li><strong>Pick one main material and one accent</strong><span>Walnut and oak make a room feel warm, marble and porcelain stone look the most luxurious, fluted wood adds texture, lacquer is clean and costs less, and backlit onyx is a statement piece. Two materials together almost always look better than three or four.</span></li>
+      <li><strong>Plan the lighting</strong><span>Vertical LED strips inside the shelves, small lights over each shelf, or a soft glow under a floating cabinet. Warm white (around 3000K) suits wood and stone best. The drivers are hidden inside the cabinets.</span></li>
+      <li><strong>Decide what needs to be hidden</strong><span>Routers, receivers, consoles and sound systems go in closed, ventilated cabinets, and every cable runs inside the wall. Tell us what devices you have so we size the storage for them.</span></li>
+    </ol>
+    <h3 class="dz__h3">Popular looks in UAE homes</h3>
+    <ul class="svc__list">
+      <li><strong>Warm walnut and stone</strong>: walnut towers with lit shelves around a light stone or marble-look panel.</li>
+      <li><strong>All-white minimal</strong>: matt white or off-white panels with fluted details and hidden LED.</li>
+      <li><strong>Dark luxury</strong>: dark marble or smoked wood with brass or gold trim and backlit display.</li>
+    </ul>
+    <div class="svc__qa">
+      <h3>Can you change a design to fit my wall?</h3>
+      <p>Yes. Every design here is made to measure, so we change the width, height, materials, colours and lighting to suit your room after the free site survey.</p>
+      <h3>How much do these designs cost?</h3>
+      <p>Our media walls start from AED 8,000. The price depends on the size, materials, storage and lighting. See our <a href="../media-wall-price-dubai/">media wall price guide</a>, or send us your wall size on WhatsApp for an estimate the same day.</p>
+      <h3>Is the TV included?</h3>
+      <p>No. We build the wall and mount the TV you choose, with all cables hidden.</p>
+      <h3>How long does it take?</h3>
+      <p>After you approve the drawing, building in our workshop usually takes two to three weeks, and installation takes one to two days.</p>
+    </div>
+  </section>
+
   <div class="svc__cta">
     <div>
       <h2>Not sure which one?</h2>
@@ -291,13 +319,20 @@ ${real.length ? `  <section class="dz__section" data-section="real">
 
 </main>
 
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","@id":"https://luxurymediawall.com/designs/#faq","mainEntity":[
+{"@type":"Question","name":"Can you change a design to fit my wall?","acceptedAnswer":{"@type":"Answer","text":"Yes. Every design is made to measure, so we change the width, height, materials, colours and lighting to suit your room after the free site survey."}},
+{"@type":"Question","name":"How much do these media wall designs cost?","acceptedAnswer":{"@type":"Answer","text":"Media walls start from AED 8,000. The price depends on the size, materials, storage and lighting."}},
+{"@type":"Question","name":"Is the TV included?","acceptedAnswer":{"@type":"Answer","text":"No. We build the wall and mount the TV you choose, with all cables hidden."}},
+{"@type":"Question","name":"How long does a media wall take?","acceptedAnswer":{"@type":"Answer","text":"After the drawing is approved, workshop building usually takes two to three weeks, and installation takes one to two days."}}]}
+</script>
 <script>
   /* Filter chips: a group filter shows one section, a tag filter shows every
      card carrying that tag. Sections with nothing left in them are hidden. */
   (function () {
     var chips = document.querySelectorAll('.dz__chip');
     var cards = document.querySelectorAll('.dz__card');
-    var sections = document.querySelectorAll('.dz__section');
+    var sections = document.querySelectorAll('.dz__section:not(.dz__guide)');
     var count = document.getElementById('dz-count');
     chips.forEach(function (chip) {
       chip.addEventListener('click', function () {
